@@ -3,4 +3,11 @@
   src: url('/fonts/genshin.zh-cn.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
+}
+
+@font-face {
+  font-family: 'GothicWar';
+  src: url('/fonts/GothicWar.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
 } 
