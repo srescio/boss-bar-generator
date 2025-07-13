@@ -18,24 +18,29 @@ const LOCAL_STORAGE_KEY = 'boss-bar-generator';
 
 type BossBarState = {
   gameStyle: string;
-  text1: string;
-  text2: string;
-  text3: string;
   background: string;
   format: string;
   scale: number;
-  [key: string]: string | number;
+  [key: string]: string | number | undefined;
 };
 
-const defaultState: BossBarState = {
-  gameStyle: 'genshin',
-  text1: '',
-  text2: '',
-  text3: '',
-  background: 'transparent',
-  format: 'bar-only',
-  scale: 5,
-};
+// Dynamically generate defaultState using bossBars config
+const defaultState: BossBarState = (() => {
+  const style = 'genshin';
+  const config = bossBars[style];
+  const state: BossBarState = {
+    gameStyle: style,
+    background: 'transparent',
+    format: 'video-call',
+    scale: 5,
+  };
+  if (config) {
+    config.fields.forEach(f => {
+      state[f.key] = f.default ?? '';
+    });
+  }
+  return state;
+})();
 
 // Map game styles to font families
 const STYLE_FONTS: Record<string, string> = {
@@ -92,7 +97,18 @@ const BossBar: React.FC<BossBarProps> = ({ gameStyle, text1, text2, text3, scale
 function App() {
   const [state, setState] = useState<BossBarState>(() => {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-    return saved ? JSON.parse(saved) : defaultState;
+    let loaded = saved ? JSON.parse(saved) : { ...defaultState };
+    // Ensure all keys from the current config are present
+    const style = loaded.gameStyle || defaultState.gameStyle;
+    const config = bossBars[style];
+    if (config) {
+      config.fields.forEach(f => {
+        if (loaded[f.key] === undefined) {
+          loaded[f.key] = f.default ?? '';
+        }
+      });
+    }
+    return loaded;
   });
   const scale = state.scale;
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -204,7 +220,11 @@ function App() {
               {field.label}:<br />
               <input
                 name={field.key}
-                value={state[field.key] ?? ''}
+                value={
+                  state[field.key] !== undefined
+                    ? state[field.key]
+                    : field.default ?? ''
+                }
                 onChange={handleChange}
                 maxLength={32}
               />
@@ -268,7 +288,13 @@ function App() {
               const BarComponent = config.component;
               // Pass only the fields this bar expects
               const barProps: any = { scale };
-              config.fields.forEach(f => { barProps[f.key] = state[f.key] ?? '' });
+              config.fields.forEach(f => {
+                let val = state[f.key];
+                if (val === undefined || val === null || val === '') {
+                  val = f.default ?? '';
+                }
+                barProps[f.key] = val;
+              });
               return <BarComponent {...barProps} />;
             })()}
           </div>

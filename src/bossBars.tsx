@@ -1,29 +1,51 @@
 import GenshinBar from './bars/GenshinBar';
 import React from 'react';
 
-export interface BossBarField {
-  key: string;
+export interface BossBarFieldRaw {
   label: string;
   default?: string;
 }
 
-export interface BossBarConfig {
+export interface BossBarField extends BossBarFieldRaw {
+  key: string;
+}
+
+export interface BossBarConfigRaw {
   label: string;
   component: React.FC<any>;
-  fields: BossBarField[];
+  fields: BossBarFieldRaw[];
   fontFamily: string;
 }
 
-export const bossBars: Record<string, BossBarConfig> = {
+export interface BossBarConfig extends Omit<BossBarConfigRaw, 'fields'> {
+  fields: BossBarField[];
+}
+
+function generateFieldKey(componentName: string, label: string) {
+  return `${componentName}_${label.replace(/\s+/g, '').toLowerCase()}`;
+}
+
+const bossBarsRaw: Record<string, BossBarConfigRaw> = {
   genshin: {
     label: 'Genshin Impact',
     component: GenshinBar,
     fields: [
-      { key: 'text1', label: 'Text 1', default: '' },
-      { key: 'text2', label: 'Text 2', default: '' },
-      { key: 'text3', label: 'Text 3', default: '' },
+      { label: 'Boss Name', default: 'Boss Name' },
+      { label: 'Title lore', default: 'Title lore' },
+      { label: 'Level', default: 'Lv. 100' },
     ],
     fontFamily: 'GenshinFont, sans-serif',
   },
   // Add more styles here
-}; 
+};
+
+export const bossBars: Record<string, BossBarConfig> = Object.fromEntries(
+  Object.entries(bossBarsRaw).map(([key, config]) => {
+    const componentName = config.component.displayName || config.component.name || key;
+    const fields = config.fields.map(f => ({
+      ...f,
+      key: generateFieldKey(componentName, f.label),
+    }));
+    return [key, { ...config, fields }];
+  })
+); 
