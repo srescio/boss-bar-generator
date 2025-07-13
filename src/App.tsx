@@ -68,6 +68,7 @@ function App() {
     let scale = 1;
     let width = 800;
     let height = 160;
+    let originalStyle: Partial<CSSStyleDeclaration> = {};
     if (state.format === 'video-call') {
       scale = 3; // 640*3=1920, 360*3=1080
       width = 640;
@@ -78,27 +79,39 @@ function App() {
       canvasRef.current.style.width = width + 'px';
       canvasRef.current.style.height = height + 'px';
     }
+    // Remove border and padding for download
+    originalStyle.border = canvasRef.current.style.border;
+    originalStyle.padding = canvasRef.current.style.padding;
+    originalStyle.background = canvasRef.current.style.background;
+    canvasRef.current.style.border = 'none';
+    canvasRef.current.style.padding = '0';
+    if (state.background === 'transparent') {
+      canvasRef.current.style.background = 'transparent';
+    }
     // Wait for browser to apply styles
     await new Promise((r) => setTimeout(r, 50));
     const canvas = await html2canvas(canvasRef.current, {
       backgroundColor: null,
       width: width * scale,
       height: height * scale,
-      scale: 1, // html2canvas will capture the scaled-up DOM
+      scale: 1,
     });
-    // Revert scale
+    // Revert scale and styles
     if (state.format === 'video-call') {
       canvasRef.current.style.transform = '';
       canvasRef.current.style.transformOrigin = '';
       canvasRef.current.style.width = '';
       canvasRef.current.style.height = '';
     }
-    const link = document.createElement('a');
+    canvasRef.current.style.border = originalStyle.border || '';
+    canvasRef.current.style.padding = originalStyle.padding || '';
+    canvasRef.current.style.background = originalStyle.background || '';
     const gameStyle = state.gameStyle;
     const format = state.format;
     const pageUrl = window.location.href;
     const urlHost = new URL(pageUrl).hostname;
     const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+    const link = document.createElement('a');
     link.download = `boss-bar-${gameStyle}-${format}-${urlHost}-${timestamp}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
