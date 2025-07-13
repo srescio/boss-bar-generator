@@ -258,6 +258,7 @@ function App() {
               alignItems: 'center',
               justifyContent: 'flex-start',
               gap: 8,
+              border: '2px solid #bfa76a',
               ...getBarStyle(),
             }}
           >
