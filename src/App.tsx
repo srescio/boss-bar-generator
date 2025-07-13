@@ -114,7 +114,17 @@ function App() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#18181b', color: '#fff', padding: 24 }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        background: `linear-gradient(rgba(24,24,27,0.85), rgba(24,24,27,0.85)), url('${process.env.PUBLIC_URL}/meme/3dragons.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        color: '#fff',
+        padding: 24,
+      }}
+    >
       <h1>Boss Bar Generator</h1>
       <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
         <div className="form-container">

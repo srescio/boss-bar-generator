@@ -19,6 +19,9 @@ body {
   background: #18181b;
   color: #fff;
   font-family: system-ui, sans-serif;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .App {
