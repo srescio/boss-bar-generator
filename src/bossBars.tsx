@@ -1,4 +1,5 @@
 import GenshinBar from './bars/GenshinBar';
+import DemonsSoulsBar from './bars/DemonsSoulsBar';
 import React from 'react';
 
 export interface BossBarFieldRaw {
@@ -35,6 +36,14 @@ const bossBarsRaw: Record<string, BossBarConfigRaw> = {
       { label: 'Level', default: 'Lv. 100' },
     ],
     fontFamily: 'GenshinFont, sans-serif',
+  },
+  demonsouls: {
+    label: "Demon's Souls",
+    component: DemonsSoulsBar,
+    fields: [
+      { label: 'Boss Name', default: 'Boss Name' },
+    ],
+    fontFamily: 'serif', // Replace with actual font if available
   },
   // Add more styles here
 };
