@@ -175,7 +175,6 @@ function App() {
         ...style,
         border: '2px solid #bfa76a',
         borderRadius: 10,
-        background: '#23252b',
         color: '#e9e7e1',
       };
     } else if (state.gameStyle === 'demonsouls') {
@@ -183,7 +182,6 @@ function App() {
         ...style,
         border: '2px solid #444',
         borderRadius: 10,
-        background: '#18181b',
         color: '#b0b0b0',
       };
     }
