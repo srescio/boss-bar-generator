@@ -1,5 +1,6 @@
 import GenshinBar from './bars/GenshinBar';
 import DemonsSoulsBar from './bars/DemonsSoulsBar';
+import Tekken2Bar from './bars/Tekken2Bar';
 import React from 'react';
 
 export interface BossBarFieldRaw {
@@ -46,6 +47,15 @@ const bossBarsRaw: Record<string, BossBarConfigRaw> = {
     fontFamily: 'serif', // Replace with actual font if available
   },
   // Add more styles here
+  tekken2: {
+    label: 'Tekken 2',
+    component: Tekken2Bar,
+    fields: [
+      { label: 'Player 1', default: 'Player 1' },
+      { label: 'Player 2', default: 'Player 2' },
+    ],
+    fontFamily: 'sans-serif',
+  },
 };
 
 export const bossBars: Record<string, BossBarConfig> = Object.fromEntries(
