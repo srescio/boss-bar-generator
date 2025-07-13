@@ -4,9 +4,8 @@ import logo from './logo.svg';
 import './App.css';
 
 const GAME_STYLES = [
-  { name: 'Minecraft', value: 'minecraft' },
-  { name: 'World of Warcraft', value: 'wow' },
-  { name: 'Final Fantasy', value: 'ff' },
+  { name: "Genshin Impact", value: "genshin" },
+  { name: "Demon's Souls", value: "demonsouls" },
 ];
 
 const BACKGROUNDS = [
@@ -29,12 +28,18 @@ type BossBarState = {
 };
 
 const defaultState: BossBarState = {
-  gameStyle: 'minecraft',
+  gameStyle: 'genshin',
   text1: '',
   text2: '',
   text3: '',
   background: 'transparent',
   format: 'bar-only',
+};
+
+// Map game styles to font families
+const STYLE_FONTS: Record<string, string> = {
+  genshin: 'GenshinFont, sans-serif',
+  demonsouls: 'serif', // Replace with actual font if available
 };
 
 function App() {
@@ -101,16 +106,26 @@ function App() {
 
   // Simple style simulation for demo
   const getBarStyle = () => {
-    switch (state.gameStyle) {
-      case 'minecraft':
-        return { border: '2px solid #333', borderRadius: 6, background: '#222', color: '#fff', fontFamily: 'monospace', fontWeight: 'bold' };
-      case 'wow':
-        return { border: '2px solid gold', borderRadius: 12, background: '#2a1a0a', color: 'gold', fontFamily: 'serif', fontWeight: 'bold' };
-      case 'ff':
-        return { border: '2px solid #aaf', borderRadius: 8, background: '#222244', color: '#aaf', fontFamily: 'sans-serif', fontWeight: 'bold' };
-      default:
-        return {};
+    let style: React.CSSProperties = { fontWeight: 'bold' };
+    if (state.gameStyle === 'genshin') {
+      style = {
+        ...style,
+        border: '2px solid #bfa76a',
+        borderRadius: 10,
+        background: '#23252b',
+        color: '#e9e7e1',
+      };
+    } else if (state.gameStyle === 'demonsouls') {
+      style = {
+        ...style,
+        border: '2px solid #444',
+        borderRadius: 10,
+        background: '#18181b',
+        color: '#b0b0b0',
+      };
     }
+    style.fontFamily = STYLE_FONTS[state.gameStyle] || 'sans-serif';
+    return style;
   };
 
   return (
