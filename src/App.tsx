@@ -25,6 +25,7 @@ type BossBarState = {
   text3: string;
   background: string;
   format: string;
+  scale: number;
 };
 
 const defaultState: BossBarState = {
@@ -34,6 +35,7 @@ const defaultState: BossBarState = {
   text3: '',
   background: 'transparent',
   format: 'bar-only',
+  scale: 5,
 };
 
 // Map game styles to font families
@@ -47,25 +49,29 @@ type BossBarProps = {
   text1: string;
   text2: string;
   text3: string;
+  scale: number;
 };
 
-const BossBar: React.FC<BossBarProps> = ({ gameStyle, text1, text2, text3 }) => {
+const BossBar: React.FC<BossBarProps> = ({ gameStyle, text1, text2, text3, scale }) => {
+  // Scale factor: 1 = 0.5x, 5 = 1x, 10 = 2x
+  const scaleFactor = scale / 5;
   // For now, only genshin is supported
   if (gameStyle !== 'genshin') return null;
+  const barHeight = 32 * scaleFactor;
   return (
-    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', marginTop: 24 }}>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-        <div style={{ fontSize: 32, fontFamily: 'GenshinFont, sans-serif', fontWeight: 700 }}>{text1}</div>
-        <div style={{ fontSize: 20, fontFamily: 'GenshinFont, sans-serif', fontWeight: 400, opacity: 0.7 }}>{text2}</div>
+    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', marginTop: 24 * scaleFactor }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 * scaleFactor }}>
+        <div style={{ fontSize: 32 * scaleFactor, fontFamily: 'GenshinFont, sans-serif', fontWeight: 700 }}>{text1}</div>
+        <div style={{ fontSize: 20 * scaleFactor, fontFamily: 'GenshinFont, sans-serif', fontWeight: 400, opacity: 0.7 }}>{text2}</div>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: 12, width: '80%' }}>
-        <div style={{ fontSize: 16, fontFamily: 'GenshinFont, sans-serif', fontWeight: 400, marginRight: 12, whiteSpace: 'nowrap' }}>{text3}</div>
+      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: 12 * scaleFactor, width: '80%' }}>
+        <div style={{ fontSize: 16 * scaleFactor, fontFamily: 'GenshinFont, sans-serif', fontWeight: 400, marginRight: 12 * scaleFactor, whiteSpace: 'nowrap' }}>{text3}</div>
         <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-          <img src={process.env.PUBLIC_URL + '/bars/genshin/bbg-l.png'} alt="bar left" style={{ height: 32 }} />
-          <div style={{ flex: 1, height: 32, background: 'none', display: 'flex' }}>
-            <img src={process.env.PUBLIC_URL + '/bars/genshin/bbg-c.png'} alt="bar center" style={{ width: '100%', height: 32, objectFit: 'fill' }} />
+          <img src={process.env.PUBLIC_URL + '/bars/genshin/bbg-l.png'} alt="bar left" style={{ height: barHeight }} />
+          <div style={{ flex: 1, height: barHeight, background: 'none', display: 'flex' }}>
+            <img src={process.env.PUBLIC_URL + '/bars/genshin/bbg-c.png'} alt="bar center" style={{ width: '100%', height: barHeight, objectFit: 'fill' }} />
           </div>
-          <img src={process.env.PUBLIC_URL + '/bars/genshin/bbg-r.png'} alt="bar right" style={{ height: 32 }} />
+          <img src={process.env.PUBLIC_URL + '/bars/genshin/bbg-r.png'} alt="bar right" style={{ height: barHeight }} />
         </div>
       </div>
     </div>
@@ -77,15 +83,17 @@ function App() {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
     return saved ? JSON.parse(saved) : defaultState;
   });
+  const scale = state.scale;
   const canvasRef = useRef<HTMLDivElement>(null);
 
+  // Persist state (including scale) to localStorage
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
   }, [state]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setState((prev) => ({ ...prev, [name]: value }));
+    setState((prev) => ({ ...prev, [name]: name === 'scale' ? Number(value) : value }));
   };
 
   const handleClear = () => {
@@ -221,6 +229,18 @@ function App() {
               <option value="video-call">Video Call (16:9 Full HD)</option>
             </select>
           </label>
+          <label>
+            Scale: {scale}
+            <input
+              type="range"
+              min={1}
+              max={10}
+              name="scale"
+              value={scale}
+              onChange={handleChange}
+              style={{ width: '100%' }}
+            />
+          </label>
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={handleDownload}>Download PNG</button>
             <button onClick={handleClear}>Clear All</button>
@@ -250,6 +270,7 @@ function App() {
               text1={state.text1}
               text2={state.text2}
               text3={state.text3}
+              scale={scale}
             />
           </div>
         </div>
