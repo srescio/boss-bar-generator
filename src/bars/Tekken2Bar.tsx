@@ -1,29 +1,28 @@
 import React from 'react';
 
-export interface Tekken2BarProps {
-  scale: number;
-  [key: string]: any;
-}
+// Add color type
+export type TekkenColor = 'red' | 'darkred' | 'brightred' | 'blue';
 
 // Full mapping for Tekken sprite font (first color row)
 const CHAR_MAP: Record<string, string> = {
-  '0': 'tekken-char-0', '1': 'tekken-char-1', '2': 'tekken-char-2', '3': 'tekken-char-3', '4': 'tekken-char-4',
-  '5': 'tekken-char-5', '6': 'tekken-char-6', '7': 'tekken-char-7', '8': 'tekken-char-8', '9': 'tekken-char-9',
-  'A': 'tekken-char-A', 'B': 'tekken-char-B', 'C': 'tekken-char-C', 'D': 'tekken-char-D', 'E': 'tekken-char-E',
-  'F': 'tekken-char-F', 'G': 'tekken-char-G', 'H': 'tekken-char-H', 'I': 'tekken-char-I', 'J': 'tekken-char-J',
-  'K': 'tekken-char-K', 'L': 'tekken-char-L', 'M': 'tekken-char-M', 'N': 'tekken-char-N', 'O': 'tekken-char-O',
-  'P': 'tekken-char-P', 'Q': 'tekken-char-Q', 'R': 'tekken-char-R', 'S': 'tekken-char-S', 'T': 'tekken-char-T',
-  'U': 'tekken-char-U', 'V': 'tekken-char-V', 'W': 'tekken-char-W', 'X': 'tekken-char-X', 'Y': 'tekken-char-Y',
-  'Z': 'tekken-char-Z', '!': 'tekken-char-em', '?': 'tekken-char-qm', '.': 'tekken-char-fs', '-': 'tekken-char-dh', "'": 'tekken-char-qt'
+  '0': '0', '1': '1', '2': '2', '3': '3', '4': '4',
+  '5': '5', '6': '6', '7': '7', '8': '8', '9': '9',
+  'A': 'A', 'B': 'B', 'C': 'C', 'D': 'D', 'E': 'E',
+  'F': 'F', 'G': 'G', 'H': 'H', 'I': 'I', 'J': 'J',
+  'K': 'K', 'L': 'L', 'M': 'M', 'N': 'N', 'O': 'O',
+  'P': 'P', 'Q': 'Q', 'R': 'R', 'S': 'S', 'T': 'T',
+  'U': 'U', 'V': 'V', 'W': 'W', 'X': 'X', 'Y': 'Y',
+  'Z': 'Z', '!': 'em', '?': 'qm', '.': 'fs', '-': 'dh', "'": 'qt'
 };
 
-function renderTekkenSpriteText(text: string) {
+function renderTekkenSpriteText(text: string, color: TekkenColor = 'red') {
   const baseSize = 32; // px, original sprite cell size
   return (
-    <span className="tekken-sprite-text" style={{ flexWrap: 'wrap', lineHeight: 1 }}>
+    <span className={`tekken-sprite-text`} style={{ flexWrap: 'wrap', lineHeight: 1 }}>
       {text.split('').map((char, i) => {
         const upper = char.toUpperCase();
-        const className = CHAR_MAP[upper] ? `tekken-sprite-char ${CHAR_MAP[upper]}` : '';
+        const charKey = CHAR_MAP[upper];
+        const className = charKey ? `tekken-sprite-char tekken-sprite-char-${color} tekken-char-${charKey}-${color}` : '';
         return className ? (
           <span
             key={i}
@@ -43,12 +42,26 @@ function renderTekkenSpriteText(text: string) {
   );
 }
 
+interface Tekken2BarProps {
+  scale: number;
+  player1: string;
+  player2: string;
+  player1Color?: TekkenColor;
+  player2Color?: TekkenColor;
+  [key: string]: any;
+}
+
 const Tekken2Bar: React.FC<Tekken2BarProps> = (props) => {
   const scaleFactor = props.scale / 5;
-  const p1Key = Object.keys(props).find(k => k.toLowerCase().includes('player1'));
-  const p2Key = Object.keys(props).find(k => k.toLowerCase().includes('player2'));
+  const p1Key = Object.keys(props).find(k => k.toLowerCase().includes('player1') && !k.toLowerCase().includes('color'));
+  const p2Key = Object.keys(props).find(k => k.toLowerCase().includes('player2') && !k.toLowerCase().includes('color'));
   const p1 = p1Key ? props[p1Key] : '';
   const p2 = p2Key ? props[p2Key] : '';
+  // Use the generated field keys for color
+  const p1ColorKey = Object.keys(props).find(k => k.toLowerCase().includes('player1color'));
+  const p2ColorKey = Object.keys(props).find(k => k.toLowerCase().includes('player2color'));
+  const p1Color = (p1ColorKey && props[p1ColorKey]) || 'red';
+  const p2Color = (p2ColorKey && props[p2ColorKey]) || 'red';
   const barHeight = Math.round(32 * scaleFactor);
 
   return (
@@ -139,10 +152,10 @@ const Tekken2Bar: React.FC<Tekken2BarProps> = (props) => {
       {/* Names row below bars */}
       <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: -10 * (scaleFactor * 2) }}>
         <div style={{ maxWidth: '48%', wordBreak: 'break-word', whiteSpace: 'pre-wrap', textAlign: 'left', display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', transform: `scale(${scaleFactor})`, transformOrigin: 'left bottom' }}>
-          {renderTekkenSpriteText(p1)}
+          {renderTekkenSpriteText(p1, p1Color)}
         </div>
         <div style={{ maxWidth: '48%', wordBreak: 'break-word', whiteSpace: 'pre-wrap', textAlign: 'right', display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'flex-end', transform: `scale(${scaleFactor})`, transformOrigin: 'right bottom' }}>
-          {renderTekkenSpriteText(p2)}
+          {renderTekkenSpriteText(p2, p2Color)}
         </div>
       </div>
     </div>

@@ -215,21 +215,56 @@ function App() {
               ))}
             </select>
           </label>
-          {bossBars[state.gameStyle]?.fields.map(field => (
-            <label key={field.key}>
-              {field.label}:<br />
-              <input
-                name={field.key}
-                value={
-                  state[field.key] !== undefined
-                    ? state[field.key]
-                    : field.default ?? ''
-                }
-                onChange={handleChange}
-                maxLength={32}
-              />
-            </label>
-          ))}
+          {bossBars[state.gameStyle]?.fields.map((field, idx, arr) => {
+            // For Tekken 2, render color select next to player input
+            if (state.gameStyle === 'tekken2' && field.label.includes('Player') && !field.label.includes('Color')) {
+              const colorField = arr[idx + 1];
+              return (
+                <div key={field.key} style={{ display: 'flex', gap: 8, alignItems: 'center', width: '100%' }}>
+                  <label style={{ flex: 2 }}>
+                    {field.label}:<br />
+                    <input
+                      name={field.key}
+                      value={state[field.key] !== undefined ? state[field.key] : field.default ?? ''}
+                      onChange={handleChange}
+                      maxLength={32}
+                    />
+                  </label>
+                  {colorField && colorField.label.includes('Color') && (
+                    <label style={{ flex: 1 }}>
+                      Color:<br />
+                      <select
+                        name={colorField.key}
+                        value={state[colorField.key] !== undefined ? state[colorField.key] : colorField.default ?? 'red'}
+                        onChange={handleChange}
+                      >
+                        <option value="red">Red</option>
+                        <option value="darkred">Dark Red</option>
+                        <option value="brightred">Bright Red</option>
+                        <option value="blue">Blue</option>
+                      </select>
+                    </label>
+                  )}
+                </div>
+              );
+            }
+            // Hide color fields for Tekken2 (handled above)
+            if (state.gameStyle === 'tekken2' && field.label.includes('Color')) {
+              return null;
+            }
+            // Default rendering for other fields
+            return (
+              <label key={field.key}>
+                {field.label}:<br />
+                <input
+                  name={field.key}
+                  value={state[field.key] !== undefined ? state[field.key] : field.default ?? ''}
+                  onChange={handleChange}
+                  maxLength={32}
+                />
+              </label>
+            );
+          })}
           <label>
             Scale: {scale}
             <input

@@ -52,7 +52,9 @@ const bossBarsRaw: Record<string, BossBarConfigRaw> = {
     component: Tekken2Bar,
     fields: [
       { label: 'Player 1', default: 'Player 1' },
+      { label: 'Player 1 Color', default: 'red' },
       { label: 'Player 2', default: 'Player 2' },
+      { label: 'Player 2 Color', default: 'red' },
     ],
     fontFamily: 'sans-serif',
   },
