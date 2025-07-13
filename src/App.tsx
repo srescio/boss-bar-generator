@@ -25,6 +25,7 @@ type BossBarState = {
   text2: string;
   text3: string;
   background: string;
+  format: string;
 };
 
 const defaultState: BossBarState = {
@@ -33,6 +34,7 @@ const defaultState: BossBarState = {
   text2: '',
   text3: '',
   background: 'transparent',
+  format: 'bar-only',
 };
 
 function App() {
@@ -58,9 +60,18 @@ function App() {
 
   const handleDownload = async () => {
     if (!canvasRef.current) return;
-    const canvas = await html2canvas(canvasRef.current, { backgroundColor: null });
+    const canvas = await html2canvas(canvasRef.current, { 
+      backgroundColor: null,
+      width: state.format === 'video-call' ? 1920 : 800,
+      height: state.format === 'video-call' ? 1080 : 160,
+    });
     const link = document.createElement('a');
-    link.download = 'boss-bar.png';
+    const gameStyle = state.gameStyle;
+    const format = state.format;
+    const pageUrl = window.location.href;
+    const urlHost = new URL(pageUrl).hostname;
+    const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+    link.download = `boss-bar-${gameStyle}-${format}-${urlHost}-${timestamp}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
   };
@@ -83,50 +94,56 @@ function App() {
     <div style={{ minHeight: '100vh', background: '#18181b', color: '#fff', padding: 24 }}>
       <h1>Boss Bar Generator</h1>
       <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
-        <div style={{ minWidth: 300 }}>
+        <div className="form-container">
           <label>
             Game Style:<br />
-            <select name="gameStyle" value={state.gameStyle} onChange={handleChange} style={{ width: '100%' }}>
+            <select name="gameStyle" value={state.gameStyle} onChange={handleChange}>
               {GAME_STYLES.map((g) => (
                 <option key={g.value} value={g.value}>{g.name}</option>
               ))}
             </select>
           </label>
-          <br /><br />
           <label>
             Text 1:<br />
-            <input name="text1" value={state.text1} onChange={handleChange} style={{ width: '100%' }} maxLength={32} />
+            <input name="text1" value={state.text1} onChange={handleChange} maxLength={32} />
           </label>
-          <br /><br />
           <label>
             Text 2:<br />
-            <input name="text2" value={state.text2} onChange={handleChange} style={{ width: '100%' }} maxLength={32} />
+            <input name="text2" value={state.text2} onChange={handleChange} maxLength={32} />
           </label>
-          <br /><br />
           <label>
             Text 3:<br />
-            <input name="text3" value={state.text3} onChange={handleChange} style={{ width: '100%' }} maxLength={32} />
+            <input name="text3" value={state.text3} onChange={handleChange} maxLength={32} />
           </label>
-          <br /><br />
           <label>
             Background:<br />
-            <select name="background" value={state.background} onChange={handleChange} style={{ width: '100%' }}>
+            <select name="background" value={state.background} onChange={handleChange}>
               {BACKGROUNDS.map((b) => (
                 <option key={b.value} value={b.value}>{b.name}</option>
               ))}
             </select>
           </label>
-          <br /><br />
-          <button onClick={handleDownload} style={{ marginRight: 8 }}>Download PNG</button>
-          <button onClick={handleClear}>Clear All</button>
+          <label>
+            Format:<br />
+            <select name="format" value={state.format} onChange={handleChange}>
+              <option value="bar-only">Bar Only</option>
+              <option value="video-call">Video Call (16:9 Full HD)</option>
+            </select>
+          </label>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button onClick={handleDownload}>Download PNG</button>
+            <button onClick={handleClear}>Clear All</button>
+          </div>
         </div>
         <div>
           <h2>Live Preview</h2>
           <div
             ref={canvasRef}
             style={{
-              minWidth: 400,
-              minHeight: 80,
+              minWidth: state.format === 'video-call' ? 640 : 400,
+              minHeight: state.format === 'video-call' ? 360 : 80,
+              width: state.format === 'video-call' ? 640 : 400,
+              height: state.format === 'video-call' ? 360 : 80,
               padding: 16,
               background: state.background === 'transparent' ? 'transparent' : state.background,
               display: 'flex',
