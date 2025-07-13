@@ -60,11 +60,34 @@ function App() {
 
   const handleDownload = async () => {
     if (!canvasRef.current) return;
-    const canvas = await html2canvas(canvasRef.current, { 
+    let scale = 1;
+    let width = 800;
+    let height = 160;
+    if (state.format === 'video-call') {
+      scale = 3; // 640*3=1920, 360*3=1080
+      width = 640;
+      height = 360;
+      // Apply scale transform
+      canvasRef.current.style.transform = `scale(${scale})`;
+      canvasRef.current.style.transformOrigin = 'top left';
+      canvasRef.current.style.width = width + 'px';
+      canvasRef.current.style.height = height + 'px';
+    }
+    // Wait for browser to apply styles
+    await new Promise((r) => setTimeout(r, 50));
+    const canvas = await html2canvas(canvasRef.current, {
       backgroundColor: null,
-      width: state.format === 'video-call' ? 1920 : 800,
-      height: state.format === 'video-call' ? 1080 : 160,
+      width: width * scale,
+      height: height * scale,
+      scale: 1, // html2canvas will capture the scaled-up DOM
     });
+    // Revert scale
+    if (state.format === 'video-call') {
+      canvasRef.current.style.transform = '';
+      canvasRef.current.style.transformOrigin = '';
+      canvasRef.current.style.width = '';
+      canvasRef.current.style.height = '';
+    }
     const link = document.createElement('a');
     const gameStyle = state.gameStyle;
     const format = state.format;
