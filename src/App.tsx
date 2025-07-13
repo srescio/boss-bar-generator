@@ -2,11 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import html2canvas from 'html2canvas';
 import logo from './logo.svg';
 import './App.css';
+import { bossBars } from './bossBars';
 
-const GAME_STYLES = [
-  { name: "Genshin Impact", value: "genshin" },
-  { name: "Demon's Souls", value: "demonsouls" },
-];
+const GAME_STYLES = Object.entries(bossBars).map(([value, config]) => ({ name: config.label, value }));
 
 const BACKGROUNDS = [
   { name: 'Transparent', value: 'transparent' },
@@ -26,6 +24,7 @@ type BossBarState = {
   background: string;
   format: string;
   scale: number;
+  [key: string]: string | number;
 };
 
 const defaultState: BossBarState = {
@@ -169,23 +168,11 @@ function App() {
 
   // Simple style simulation for demo
   const getBarStyle = () => {
+    const config = bossBars[state.gameStyle];
     let style: React.CSSProperties = { fontWeight: 'bold' };
-    if (state.gameStyle === 'genshin') {
-      style = {
-        ...style,
-        border: '2px solid #bfa76a',
-        borderRadius: 10,
-        color: '#e9e7e1',
-      };
-    } else if (state.gameStyle === 'demonsouls') {
-      style = {
-        ...style,
-        border: '2px solid #444',
-        borderRadius: 10,
-        color: '#b0b0b0',
-      };
+    if (config && config.fontFamily) {
+      style.fontFamily = config.fontFamily;
     }
-    style.fontFamily = STYLE_FONTS[state.gameStyle] || 'sans-serif';
     return style;
   };
 
@@ -212,17 +199,28 @@ function App() {
               ))}
             </select>
           </label>
+          {bossBars[state.gameStyle]?.fields.map(field => (
+            <label key={field.key}>
+              {field.label}:<br />
+              <input
+                name={field.key}
+                value={state[field.key] ?? ''}
+                onChange={handleChange}
+                maxLength={32}
+              />
+            </label>
+          ))}
           <label>
-            Text 1:<br />
-            <input name="text1" value={state.text1} onChange={handleChange} maxLength={32} />
-          </label>
-          <label>
-            Text 2:<br />
-            <input name="text2" value={state.text2} onChange={handleChange} maxLength={32} />
-          </label>
-          <label>
-            Text 3:<br />
-            <input name="text3" value={state.text3} onChange={handleChange} maxLength={32} />
+            Scale: {scale}
+            <input
+              type="range"
+              min={1}
+              max={10}
+              name="scale"
+              value={scale}
+              onChange={handleChange}
+              style={{ width: '100%' }}
+            />
           </label>
           <label>
             Background:<br />
@@ -238,18 +236,6 @@ function App() {
               <option value="bar-only">Bar Only</option>
               <option value="video-call">Video Call (16:9 Full HD)</option>
             </select>
-          </label>
-          <label>
-            Scale: {scale}
-            <input
-              type="range"
-              min={1}
-              max={10}
-              name="scale"
-              value={scale}
-              onChange={handleChange}
-              style={{ width: '100%' }}
-            />
           </label>
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={handleDownload}>Download PNG</button>
@@ -275,13 +261,15 @@ function App() {
               ...getBarStyle(),
             }}
           >
-            <BossBar
-              gameStyle={state.gameStyle}
-              text1={state.text1}
-              text2={state.text2}
-              text3={state.text3}
-              scale={scale}
-            />
+            {(() => {
+              const config = bossBars[state.gameStyle];
+              if (!config) return null;
+              const BarComponent = config.component;
+              // Pass only the fields this bar expects
+              const barProps: any = { scale };
+              config.fields.forEach(f => { barProps[f.key] = state[f.key] ?? '' });
+              return <BarComponent {...barProps} />;
+            })()}
           </div>
         </div>
       </div>
