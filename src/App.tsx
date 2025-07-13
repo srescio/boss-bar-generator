@@ -290,7 +290,7 @@ function App() {
               const barProps: any = { scale };
               config.fields.forEach(f => {
                 let val = state[f.key];
-                if (val === undefined || val === null || val === '') {
+                if (val === undefined) {
                   val = f.default ?? '';
                 }
                 barProps[f.key] = val;
