@@ -57,7 +57,8 @@ const BossBar: React.FC<BossBarProps> = ({ gameStyle, text1, text2, text3, scale
   const scaleFactor = scale / 5;
   // For now, only genshin is supported
   if (gameStyle !== 'genshin') return null;
-  const barHeight = 32 * scaleFactor;
+  const barHeight = Math.round(32 * scaleFactor);
+  const overlap = Math.round(2 * scaleFactor); // always at least 2px overlap, scaled
   return (
     <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', marginTop: 24 * scaleFactor }}>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 * scaleFactor }}>
@@ -69,7 +70,18 @@ const BossBar: React.FC<BossBarProps> = ({ gameStyle, text1, text2, text3, scale
         <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
           <img src={process.env.PUBLIC_URL + '/bars/genshin/bbg-l.png'} alt="bar left" style={{ height: barHeight }} />
           <div style={{ flex: 1, height: barHeight, background: 'none', display: 'flex' }}>
-            <img src={process.env.PUBLIC_URL + '/bars/genshin/bbg-c.png'} alt="bar center" style={{ width: '100%', height: barHeight, objectFit: 'fill' }} />
+            <img
+              src={process.env.PUBLIC_URL + '/bars/genshin/bbg-c.png'}
+              alt="bar center"
+              style={{
+                width: `calc(100% + ${overlap * 2}px)`,
+                height: barHeight,
+                objectFit: 'fill',
+                marginLeft: -overlap,
+                marginRight: -overlap,
+                display: 'block',
+              }}
+            />
           </div>
           <img src={process.env.PUBLIC_URL + '/bars/genshin/bbg-r.png'} alt="bar right" style={{ height: barHeight }} />
         </div>
