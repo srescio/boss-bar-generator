@@ -1,0 +1,58 @@
+/* Tekken sprite mapping for red-on-black (first color row) */
+.tekken-sprite-text {
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
+}
+.tekken-sprite-char {
+  display: inline-block;
+  width: 26px;
+  height: 26px;
+  background-image: url('./PlayStation-Tekken2-BigFont.png');
+  background-size: 225px auto;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  margin-left: -7px;
+  margin-right: -7px;
+}
+.tekken-char-0 { background-position: 0px 0px; }
+.tekken-char-1 { background-position: -32px 0px; }
+.tekken-char-2 { background-position: -64px 0px; }
+.tekken-char-3 { background-position: -96px 0px; }
+.tekken-char-4 { background-position: -128px 0px; }
+.tekken-char-5 { background-position: -160px 0px; }
+.tekken-char-6 { background-position: -192px 0px; }
+.tekken-char-7 { background-position: -3px -26px; }
+.tekken-char-8 { background-position: -33px -26px; }
+.tekken-char-9 { background-position: -65px -26px; }
+.tekken-char-A { background-position: -97px -26px; }
+.tekken-char-B { background-position: -129px -26px; }
+.tekken-char-C { background-position: -161px -26px; }
+.tekken-char-D { background-position: -193px -26px; }
+.tekken-char-E { background-position: -3px -53px; }
+.tekken-char-F { background-position: -33px -53px; }
+.tekken-char-G { background-position: -65px -53px; }
+.tekken-char-H { background-position: -97px -53px; }
+.tekken-char-I { background-position: -129px -53px; }
+.tekken-char-J { background-position: -161px -53px; }
+.tekken-char-K { background-position: -193px -53px; }
+.tekken-char-L { background-position: -3px -80px; }
+.tekken-char-M { background-position: -35px -80px; }
+.tekken-char-N { background-position: -67px -80px; }
+.tekken-char-O { background-position: -97px -80px; }
+.tekken-char-P { background-position: -129px -80px; }
+.tekken-char-Q { background-position: -161px -80px; }
+.tekken-char-R { background-position: -193px -80px; }
+.tekken-char-S { background-position: -3px -106px; }
+.tekken-char-T { background-position: -35px -106px; }
+.tekken-char-U { background-position: -67px -106px; }
+.tekken-char-V { background-position: -97px -106px; }
+.tekken-char-W { background-position: -130px -106px; }
+.tekken-char-X { background-position: -161px -106px; }
+.tekken-char-Y { background-position: -193px -106px; }
+.tekken-char-Z { background-position: -3px -132px; }
+.tekken-char-em { background-position: -35px -132px; }
+.tekken-char-qm { background-position: -67px -132px; }
+.tekken-char-fs { background-position: -97px -132px; }
+.tekken-char-qt { background-position: -130px -132px; } 
+.tekken-char-dh { background-position: -161px -132px; } 
