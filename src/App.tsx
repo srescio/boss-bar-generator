@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import html2canvas from 'html2canvas';
-import logo from './logo.svg';
 import './App.css';
 import { bossBars } from './bossBars';
 
@@ -41,58 +40,6 @@ const defaultState: BossBarState = (() => {
   }
   return state;
 })();
-
-// Map game styles to font families
-const STYLE_FONTS: Record<string, string> = {
-  genshin: 'GenshinFont, sans-serif',
-  demonsouls: 'serif', // Replace with actual font if available
-};
-
-type BossBarProps = {
-  gameStyle: string;
-  text1: string;
-  text2: string;
-  text3: string;
-  scale: number;
-};
-
-const BossBar: React.FC<BossBarProps> = ({ gameStyle, text1, text2, text3, scale }) => {
-  // Scale factor: 1 = 0.5x, 5 = 1x, 10 = 2x
-  const scaleFactor = scale / 5;
-  // For now, only genshin is supported
-  if (gameStyle !== 'genshin') return null;
-  const barHeight = Math.round(32 * scaleFactor);
-  const overlap = Math.round(2 * scaleFactor); // always at least 2px overlap, scaled
-  return (
-    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', marginTop: 24 * scaleFactor }}>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 * scaleFactor }}>
-        <div style={{ fontSize: 32 * scaleFactor, fontFamily: 'GenshinFont, sans-serif', fontWeight: 700 }}>{text1}</div>
-        <div style={{ fontSize: 20 * scaleFactor, fontFamily: 'GenshinFont, sans-serif', fontWeight: 400, opacity: 0.7 }}>{text2}</div>
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: 12 * scaleFactor, width: '80%' }}>
-        <div style={{ fontSize: 16 * scaleFactor, fontFamily: 'GenshinFont, sans-serif', fontWeight: 400, marginRight: 12 * scaleFactor, whiteSpace: 'nowrap' }}>{text3}</div>
-        <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-          <img src={process.env.PUBLIC_URL + '/bars/genshin/bbg-l.png'} alt="bar left" style={{ height: barHeight }} />
-          <div style={{ flex: 1, height: barHeight, background: 'none', display: 'flex' }}>
-            <img
-              src={process.env.PUBLIC_URL + '/bars/genshin/bbg-c.png'}
-              alt="bar center"
-              style={{
-                width: `calc(100% + ${overlap * 2}px)`,
-                height: barHeight,
-                objectFit: 'fill',
-                marginLeft: -overlap,
-                marginRight: -overlap,
-                display: 'block',
-              }}
-            />
-          </div>
-          <img src={process.env.PUBLIC_URL + '/bars/genshin/bbg-r.png'} alt="bar right" style={{ height: barHeight }} />
-        </div>
-      </div>
-    </div>
-  );
-};
 
 function App() {
   const [state, setState] = useState<BossBarState>(() => {
