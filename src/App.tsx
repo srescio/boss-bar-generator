@@ -202,7 +202,7 @@ function App() {
                 reject(error);
               }
             };
-            img.onerror = () => reject(new Error('Canvas conversion with credentials failed'));
+            img.onerror = () => reject(new Error('Canvas conversion failed'));
             img.src = state.backgroundImageUrl!;
           });
         },
@@ -266,19 +266,13 @@ function App() {
     const scaleY = targetHeight / currentHeight;
     const scale = Math.min(scaleX, scaleY); // Use the smaller scale to maintain aspect ratio
     
-    let originalStyle: Partial<CSSStyleDeclaration> = {};
-    
-    // Store original styles
-    originalStyle.border = canvasRef.current.style.border;
-    originalStyle.padding = canvasRef.current.style.padding;
-    originalStyle.backgroundImage = canvasRef.current.style.backgroundImage;
-    originalStyle.backgroundSize = canvasRef.current.style.backgroundSize;
-    originalStyle.backgroundPosition = canvasRef.current.style.backgroundPosition;
-    originalStyle.backgroundRepeat = canvasRef.current.style.backgroundRepeat;
-    originalStyle.transform = canvasRef.current.style.transform;
-    originalStyle.transformOrigin = canvasRef.current.style.transformOrigin;
-    originalStyle.width = canvasRef.current.style.width;
-    originalStyle.height = canvasRef.current.style.height;
+    // Create a hidden clone for screenshot
+    const clone = canvasRef.current.cloneNode(true) as HTMLElement;
+    clone.style.position = 'absolute';
+    clone.style.left = '-9999px';
+    clone.style.top = '-9999px';
+    clone.style.zIndex = '-9999';
+    document.body.appendChild(clone);
     
     // Get the current background style from React state
     const currentBackgroundStyle = getBackgroundStyle();
@@ -289,41 +283,38 @@ function App() {
       captureBackgroundStyle.backgroundImage = `url('${convertedBackgroundUrl}')`;
     }
     
-    // Find and hide the silhouette figure
-    const silhouetteFigure = canvasRef.current.querySelector('.silhouette-figure') as HTMLElement;
-    let originalSilhouetteDisplay = '';
+    // Find and hide the silhouette figure in the clone
+    const silhouetteFigure = clone.querySelector('.silhouette-figure') as HTMLElement;
     if (silhouetteFigure) {
-      originalSilhouetteDisplay = silhouetteFigure.style.display;
       silhouetteFigure.style.display = 'none';
     }
     
-    // Apply temporary styles for high-res capture
-    canvasRef.current.style.border = 'none';
-    // Keep original padding instead of setting to 0
-    // canvasRef.current.style.padding = '0';
-    canvasRef.current.style.transform = `scale(${scale})`;
-    canvasRef.current.style.transformOrigin = 'top left';
-    canvasRef.current.style.width = currentWidth + 'px';
-    canvasRef.current.style.height = currentHeight + 'px';
+    // Apply high-res capture styles to the clone
+    clone.style.border = 'none';
+    clone.style.transform = `scale(${scale})`;
+    clone.style.transformOrigin = 'top left';
+    clone.style.width = currentWidth + 'px';
+    clone.style.height = currentHeight + 'px';
+    clone.style.color = '#fff'; // Ensure white text color
     
-    // Preserve the background styles from React state
+    // Apply background styles to the clone
     if (captureBackgroundStyle.backgroundImage) {
-      canvasRef.current.style.backgroundImage = captureBackgroundStyle.backgroundImage as string;
+      clone.style.backgroundImage = captureBackgroundStyle.backgroundImage as string;
     }
     if (captureBackgroundStyle.backgroundSize) {
-      canvasRef.current.style.backgroundSize = captureBackgroundStyle.backgroundSize as string;
+      clone.style.backgroundSize = captureBackgroundStyle.backgroundSize as string;
     }
     if (captureBackgroundStyle.backgroundPosition) {
-      canvasRef.current.style.backgroundPosition = captureBackgroundStyle.backgroundPosition as string;
+      clone.style.backgroundPosition = captureBackgroundStyle.backgroundPosition as string;
     }
     if (captureBackgroundStyle.backgroundRepeat) {
-      canvasRef.current.style.backgroundRepeat = captureBackgroundStyle.backgroundRepeat as string;
+      clone.style.backgroundRepeat = captureBackgroundStyle.backgroundRepeat as string;
     }
     
     // Wait for browser to apply styles
     await new Promise((r) => setTimeout(r, 50));
     
-    const canvas = await html2canvas(canvasRef.current, {
+    const canvas = await html2canvas(clone, {
       backgroundColor: null,
       width: targetWidth,
       height: targetHeight,
@@ -332,22 +323,8 @@ function App() {
       useCORS: true,
     });
     
-    // Revert all styles
-    canvasRef.current.style.border = originalStyle.border || '';
-    canvasRef.current.style.padding = originalStyle.padding || '';
-    canvasRef.current.style.backgroundImage = originalStyle.backgroundImage || '';
-    canvasRef.current.style.backgroundSize = originalStyle.backgroundSize || '';
-    canvasRef.current.style.backgroundPosition = originalStyle.backgroundPosition || '';
-    canvasRef.current.style.backgroundRepeat = originalStyle.backgroundRepeat || '';
-    canvasRef.current.style.transform = originalStyle.transform || '';
-    canvasRef.current.style.transformOrigin = originalStyle.transformOrigin || '';
-    canvasRef.current.style.width = originalStyle.width || '';
-    canvasRef.current.style.height = originalStyle.height || '';
-    
-    // Restore silhouette figure visibility
-    if (silhouetteFigure) {
-      silhouetteFigure.style.display = originalSilhouetteDisplay;
-    }
+    // Remove the clone from DOM
+    document.body.removeChild(clone);
     
     // Clean up converted URL if it was created (only for blob URLs)
     if (convertedBackgroundUrl && convertedBackgroundUrl !== state.backgroundImageUrl && convertedBackgroundUrl.startsWith('blob:')) {
