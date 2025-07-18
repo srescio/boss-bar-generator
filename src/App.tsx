@@ -523,8 +523,8 @@ function App() {
             </select>
           </label>
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={handleDownload}>⬇️ Download image</button>
-            <button onClick={handleClear}>Clear All</button>
+            <button onClick={handleDownload}>⬇️ Download</button>
+            <button onClick={handleClear}>🔄 Reset</button>
           </div>
         </div>
         <div className='preview-container-wrapper'>
