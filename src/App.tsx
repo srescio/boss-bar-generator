@@ -88,12 +88,6 @@ function App() {
     localStorage.removeItem(LOCAL_STORAGE_KEY);
   };
 
-  // Force reset backgroundSize to cover for debugging
-  const forceResetBackgroundSize = () => {
-    setState((prev) => ({ ...prev, backgroundSize: 'cover' }));
-    console.log('Forced backgroundSize reset to cover');
-  };
-
   const handleBackgroundChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { value } = e.target;
     
@@ -533,11 +527,6 @@ function App() {
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={handleDownload}>Download PNG</button>
             <button onClick={handleClear}>Clear All</button>
-          </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={forceResetBackgroundSize} style={{ fontSize: '0.8rem', padding: '0.3em' }}>
-              Force Reset Background Size
-            </button>
           </div>
         </div>
         <div className='preview-container-wrapper'>
