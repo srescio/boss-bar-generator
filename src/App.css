@@ -23,6 +23,11 @@ body {
   background-repeat: no-repeat;
 }
 
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .App {
   min-height: 100vh;
   padding: 0;

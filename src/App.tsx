@@ -69,6 +69,7 @@ function App() {
     console.log('Final loaded state:', loaded);
     return loaded;
   });
+  const [isLoading, setIsLoading] = useState(false);
   const scale = state.scale;
   const canvasRef = useRef<HTMLDivElement>(null);
 
@@ -152,194 +153,204 @@ function App() {
   const handleDownload = async () => {
     if (!canvasRef.current) return;
     
-    // For web images, try multiple approaches to avoid CORS issues
-    let convertedBackgroundUrl = state.backgroundImageUrl;
+    // Show loading overlay for external images
     if (state.background === 'web-image' && state.backgroundImageUrl) {
-      console.log('Attempting to convert web image:', state.backgroundImageUrl);
-      
-      // Try multiple approaches in sequence
-      const approaches = [
-        // Approach 1: Direct canvas conversion with crossOrigin
-        async () => {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          const img = new Image();
-          img.crossOrigin = 'anonymous';
+      setIsLoading(true);
+    }
+    
+    try {
+      // For web images, try multiple approaches to avoid CORS issues
+      let convertedBackgroundUrl = state.backgroundImageUrl;
+      if (state.background === 'web-image' && state.backgroundImageUrl) {
+        console.log('Attempting to convert web image:', state.backgroundImageUrl);
+        
+        // Try multiple approaches in sequence
+        const approaches = [
+          // Approach 1: Direct canvas conversion with crossOrigin
+          async () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            
+            return new Promise<string>((resolve, reject) => {
+              img.onload = () => {
+                try {
+                  canvas.width = img.width;
+                  canvas.height = img.height;
+                  ctx?.drawImage(img, 0, 0);
+                  const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                  resolve(dataUrl);
+                } catch (error) {
+                  reject(error);
+                }
+              };
+              img.onerror = () => reject(new Error('Canvas conversion failed'));
+              img.src = state.backgroundImageUrl!;
+            });
+          },
           
-          return new Promise<string>((resolve, reject) => {
-            img.onload = () => {
-              try {
-                canvas.width = img.width;
-                canvas.height = img.height;
-                ctx?.drawImage(img, 0, 0);
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-                resolve(dataUrl);
-              } catch (error) {
-                reject(error);
-              }
-            };
-            img.onerror = () => reject(new Error('Canvas conversion failed'));
-            img.src = state.backgroundImageUrl!;
-          });
-        },
-        
-        // Approach 2: Try with different crossOrigin values
-        async () => {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          const img = new Image();
-          img.crossOrigin = 'use-credentials';
+          // Approach 2: Try with different crossOrigin values
+          async () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.crossOrigin = 'use-credentials';
+            
+            return new Promise<string>((resolve, reject) => {
+              img.onload = () => {
+                try {
+                  canvas.width = img.width;
+                  canvas.height = img.height;
+                  ctx?.drawImage(img, 0, 0);
+                  const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                  resolve(dataUrl);
+                } catch (error) {
+                  reject(error);
+                }
+              };
+              img.onerror = () => reject(new Error('Canvas conversion failed'));
+              img.src = state.backgroundImageUrl!;
+            });
+          },
           
-          return new Promise<string>((resolve, reject) => {
-            img.onload = () => {
-              try {
-                canvas.width = img.width;
-                canvas.height = img.height;
-                ctx?.drawImage(img, 0, 0);
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-                resolve(dataUrl);
-              } catch (error) {
-                reject(error);
-              }
-            };
-            img.onerror = () => reject(new Error('Canvas conversion failed'));
-            img.src = state.backgroundImageUrl!;
-          });
-        },
+          // Approach 3: Use a reliable CORS proxy
+          async () => {
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(state.backgroundImageUrl!)}`;
+            const response = await fetch(proxyUrl);
+            if (!response.ok) throw new Error(`Proxy failed: ${response.status}`);
+            const blob = await response.blob();
+            return URL.createObjectURL(blob);
+          },
+          
+          // Approach 4: Try another CORS proxy
+          async () => {
+            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(state.backgroundImageUrl!)}`;
+            const response = await fetch(proxyUrl);
+            if (!response.ok) throw new Error(`Proxy failed: ${response.status}`);
+            const blob = await response.blob();
+            return URL.createObjectURL(blob);
+          }
+        ];
         
-        // Approach 3: Use a reliable CORS proxy
-        async () => {
-          const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(state.backgroundImageUrl!)}`;
-          const response = await fetch(proxyUrl);
-          if (!response.ok) throw new Error(`Proxy failed: ${response.status}`);
-          const blob = await response.blob();
-          return URL.createObjectURL(blob);
-        },
-        
-        // Approach 4: Try another CORS proxy
-        async () => {
-          const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(state.backgroundImageUrl!)}`;
-          const response = await fetch(proxyUrl);
-          if (!response.ok) throw new Error(`Proxy failed: ${response.status}`);
-          const blob = await response.blob();
-          return URL.createObjectURL(blob);
-        }
-      ];
-      
-      // Try each approach until one works
-      for (let i = 0; i < approaches.length; i++) {
-        try {
-          console.log(`Trying approach ${i + 1}...`);
-          convertedBackgroundUrl = await approaches[i]();
-          console.log(`Approach ${i + 1} succeeded!`);
-          break;
-        } catch (error) {
-          console.warn(`Approach ${i + 1} failed:`, error);
-          if (i === approaches.length - 1) {
-            console.warn('All approaches failed, using original URL');
+        // Try each approach until one works
+        for (let i = 0; i < approaches.length; i++) {
+          try {
+            console.log(`Trying approach ${i + 1}...`);
+            convertedBackgroundUrl = await approaches[i]();
+            console.log(`Approach ${i + 1} succeeded!`);
+            break;
+          } catch (error) {
+            console.warn(`Approach ${i + 1} failed:`, error);
+            if (i === approaches.length - 1) {
+              console.warn('All approaches failed, using original URL');
+            }
           }
         }
       }
+      
+      // Get the actual rendered dimensions of the preview container
+      const rect = canvasRef.current.getBoundingClientRect();
+      const currentWidth = rect.width;
+      const currentHeight = rect.height;
+      
+      // Calculate target dimensions for high-res output
+      let targetWidth = 1920;
+      let targetHeight = 1080;
+      
+      // If format is video-call, use 16:9 aspect ratio (1920x1080)
+      // If format is bar-only, maintain the aspect ratio but scale up to reasonable size
+      if (state.format === 'bar-only') {
+        const aspectRatio = currentWidth / currentHeight;
+        // Scale up to a reasonable size while maintaining aspect ratio
+        // For bar-only, we'll use a height of around 400px and scale width accordingly
+        targetHeight = 400;
+        targetWidth = Math.round(targetHeight * aspectRatio);
+      }
+      
+      // Calculate the scale factor needed
+      const scaleX = targetWidth / currentWidth;
+      const scaleY = targetHeight / currentHeight;
+      const scale = Math.min(scaleX, scaleY); // Use the smaller scale to maintain aspect ratio
+      
+      // Create a hidden clone for screenshot
+      const clone = canvasRef.current.cloneNode(true) as HTMLElement;
+      clone.style.position = 'absolute';
+      clone.style.left = '-9999px';
+      clone.style.top = '-9999px';
+      clone.style.zIndex = '-9999';
+      document.body.appendChild(clone);
+      
+      // Get the current background style from React state
+      const currentBackgroundStyle = getBackgroundStyle();
+      
+      // Create a modified background style with the converted URL if available
+      let captureBackgroundStyle = { ...currentBackgroundStyle };
+      if (state.background === 'web-image' && convertedBackgroundUrl && convertedBackgroundUrl !== state.backgroundImageUrl) {
+        captureBackgroundStyle.backgroundImage = `url('${convertedBackgroundUrl}')`;
+      }
+      
+      // Find and hide the silhouette figure in the clone
+      const silhouetteFigure = clone.querySelector('.silhouette-figure') as HTMLElement;
+      if (silhouetteFigure) {
+        silhouetteFigure.style.display = 'none';
+      }
+      
+      // Apply high-res capture styles to the clone
+      clone.style.border = 'none';
+      clone.style.transform = `scale(${scale})`;
+      clone.style.transformOrigin = 'top left';
+      clone.style.width = currentWidth + 'px';
+      clone.style.height = currentHeight + 'px';
+      clone.style.color = '#fff'; // Ensure white text color
+      
+      // Apply background styles to the clone
+      if (captureBackgroundStyle.backgroundImage) {
+        clone.style.backgroundImage = captureBackgroundStyle.backgroundImage as string;
+      }
+      if (captureBackgroundStyle.backgroundSize) {
+        clone.style.backgroundSize = captureBackgroundStyle.backgroundSize as string;
+      }
+      if (captureBackgroundStyle.backgroundPosition) {
+        clone.style.backgroundPosition = captureBackgroundStyle.backgroundPosition as string;
+      }
+      if (captureBackgroundStyle.backgroundRepeat) {
+        clone.style.backgroundRepeat = captureBackgroundStyle.backgroundRepeat as string;
+      }
+      
+      // Wait for browser to apply styles
+      await new Promise((r) => setTimeout(r, 50));
+      
+      const canvas = await html2canvas(clone, {
+        backgroundColor: null,
+        width: targetWidth,
+        height: targetHeight,
+        scale: 1,
+        allowTaint: true,
+        useCORS: true,
+      });
+      
+      // Remove the clone from DOM
+      document.body.removeChild(clone);
+      
+      // Clean up converted URL if it was created (only for blob URLs)
+      if (convertedBackgroundUrl && convertedBackgroundUrl !== state.backgroundImageUrl && convertedBackgroundUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(convertedBackgroundUrl);
+      }
+      
+      const gameStyle = state.gameStyle;
+      const format = state.format;
+      const pageUrl = window.location.href;
+      const urlHost = new URL(pageUrl).hostname;
+      const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+      const link = document.createElement('a');
+      link.download = `boss-bar-${gameStyle}-${format}-${urlHost}-${timestamp}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } finally {
+      // Hide loading overlay
+      setIsLoading(false);
     }
-    
-    // Get the actual rendered dimensions of the preview container
-    const rect = canvasRef.current.getBoundingClientRect();
-    const currentWidth = rect.width;
-    const currentHeight = rect.height;
-    
-    // Calculate target dimensions for high-res output
-    let targetWidth = 1920;
-    let targetHeight = 1080;
-    
-    // If format is video-call, use 16:9 aspect ratio (1920x1080)
-    // If format is bar-only, maintain the aspect ratio but scale up to reasonable size
-    if (state.format === 'bar-only') {
-      const aspectRatio = currentWidth / currentHeight;
-      // Scale up to a reasonable size while maintaining aspect ratio
-      // For bar-only, we'll use a height of around 400px and scale width accordingly
-      targetHeight = 400;
-      targetWidth = Math.round(targetHeight * aspectRatio);
-    }
-    
-    // Calculate the scale factor needed
-    const scaleX = targetWidth / currentWidth;
-    const scaleY = targetHeight / currentHeight;
-    const scale = Math.min(scaleX, scaleY); // Use the smaller scale to maintain aspect ratio
-    
-    // Create a hidden clone for screenshot
-    const clone = canvasRef.current.cloneNode(true) as HTMLElement;
-    clone.style.position = 'absolute';
-    clone.style.left = '-9999px';
-    clone.style.top = '-9999px';
-    clone.style.zIndex = '-9999';
-    document.body.appendChild(clone);
-    
-    // Get the current background style from React state
-    const currentBackgroundStyle = getBackgroundStyle();
-    
-    // Create a modified background style with the converted URL if available
-    let captureBackgroundStyle = { ...currentBackgroundStyle };
-    if (state.background === 'web-image' && convertedBackgroundUrl && convertedBackgroundUrl !== state.backgroundImageUrl) {
-      captureBackgroundStyle.backgroundImage = `url('${convertedBackgroundUrl}')`;
-    }
-    
-    // Find and hide the silhouette figure in the clone
-    const silhouetteFigure = clone.querySelector('.silhouette-figure') as HTMLElement;
-    if (silhouetteFigure) {
-      silhouetteFigure.style.display = 'none';
-    }
-    
-    // Apply high-res capture styles to the clone
-    clone.style.border = 'none';
-    clone.style.transform = `scale(${scale})`;
-    clone.style.transformOrigin = 'top left';
-    clone.style.width = currentWidth + 'px';
-    clone.style.height = currentHeight + 'px';
-    clone.style.color = '#fff'; // Ensure white text color
-    
-    // Apply background styles to the clone
-    if (captureBackgroundStyle.backgroundImage) {
-      clone.style.backgroundImage = captureBackgroundStyle.backgroundImage as string;
-    }
-    if (captureBackgroundStyle.backgroundSize) {
-      clone.style.backgroundSize = captureBackgroundStyle.backgroundSize as string;
-    }
-    if (captureBackgroundStyle.backgroundPosition) {
-      clone.style.backgroundPosition = captureBackgroundStyle.backgroundPosition as string;
-    }
-    if (captureBackgroundStyle.backgroundRepeat) {
-      clone.style.backgroundRepeat = captureBackgroundStyle.backgroundRepeat as string;
-    }
-    
-    // Wait for browser to apply styles
-    await new Promise((r) => setTimeout(r, 50));
-    
-    const canvas = await html2canvas(clone, {
-      backgroundColor: null,
-      width: targetWidth,
-      height: targetHeight,
-      scale: 1,
-      allowTaint: true,
-      useCORS: true,
-    });
-    
-    // Remove the clone from DOM
-    document.body.removeChild(clone);
-    
-    // Clean up converted URL if it was created (only for blob URLs)
-    if (convertedBackgroundUrl && convertedBackgroundUrl !== state.backgroundImageUrl && convertedBackgroundUrl.startsWith('blob:')) {
-      URL.revokeObjectURL(convertedBackgroundUrl);
-    }
-    
-    const gameStyle = state.gameStyle;
-    const format = state.format;
-    const pageUrl = window.location.href;
-    const urlHost = new URL(pageUrl).hostname;
-    const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-    const link = document.createElement('a');
-    link.download = `boss-bar-${gameStyle}-${format}-${urlHost}-${timestamp}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
   };
 
   // Simple style simulation for demo
@@ -383,6 +394,44 @@ function App() {
         padding: 24,
       }}
     >
+      {/* Loading Overlay */}
+      {isLoading && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            color: '#fff',
+          }}
+        >
+          <div
+            style={{
+              width: '50px',
+              height: '50px',
+              border: '4px solid #3b82f6',
+              borderTop: '4px solid transparent',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite',
+            }}
+          />
+          <p style={{ marginTop: '16px', fontSize: '18px', textAlign: 'center' }}>
+            Processing external image...
+            <br />
+            <span style={{ fontSize: '14px', opacity: 0.8 }}>
+              This may take a few seconds
+            </span>
+          </p>
+        </div>
+      )}
+      
       <h1>Boss Bar Generator</h1>
       <div className='main-container'>
         <div className="form-container">
