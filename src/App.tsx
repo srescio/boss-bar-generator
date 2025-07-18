@@ -113,6 +113,14 @@ function App() {
     originalStyle.width = canvasRef.current.style.width;
     originalStyle.height = canvasRef.current.style.height;
     
+    // Find and hide the silhouette figure
+    const silhouetteFigure = canvasRef.current.querySelector('.silhouette-figure') as HTMLElement;
+    let originalSilhouetteDisplay = '';
+    if (silhouetteFigure) {
+      originalSilhouetteDisplay = silhouetteFigure.style.display;
+      silhouetteFigure.style.display = 'none';
+    }
+    
     // Apply temporary styles for high-res capture
     canvasRef.current.style.border = 'none';
     canvasRef.current.style.padding = '0';
@@ -143,6 +151,11 @@ function App() {
     canvasRef.current.style.transformOrigin = originalStyle.transformOrigin || '';
     canvasRef.current.style.width = originalStyle.width || '';
     canvasRef.current.style.height = originalStyle.height || '';
+    
+    // Restore silhouette figure visibility
+    if (silhouetteFigure) {
+      silhouetteFigure.style.display = originalSilhouetteDisplay;
+    }
     
     const gameStyle = state.gameStyle;
     const format = state.format;
