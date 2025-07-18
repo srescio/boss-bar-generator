@@ -125,6 +125,96 @@ function App() {
   const handleDownload = async () => {
     if (!canvasRef.current) return;
     
+    // For web images, try multiple approaches to avoid CORS issues
+    let convertedBackgroundUrl = state.backgroundImageUrl;
+    if (state.background === 'web-image' && state.backgroundImageUrl) {
+      console.log('Attempting to convert web image:', state.backgroundImageUrl);
+      
+      // Try multiple approaches in sequence
+      const approaches = [
+        // Approach 1: Direct canvas conversion with crossOrigin
+        async () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          
+          return new Promise<string>((resolve, reject) => {
+            img.onload = () => {
+              try {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx?.drawImage(img, 0, 0);
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                resolve(dataUrl);
+              } catch (error) {
+                reject(error);
+              }
+            };
+            img.onerror = () => reject(new Error('Canvas conversion failed'));
+            img.src = state.backgroundImageUrl!;
+          });
+        },
+        
+        // Approach 2: Try with different crossOrigin values
+        async () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const img = new Image();
+          img.crossOrigin = 'use-credentials';
+          
+          return new Promise<string>((resolve, reject) => {
+            img.onload = () => {
+              try {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx?.drawImage(img, 0, 0);
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                resolve(dataUrl);
+              } catch (error) {
+                reject(error);
+              }
+            };
+            img.onerror = () => reject(new Error('Canvas conversion with credentials failed'));
+            img.src = state.backgroundImageUrl!;
+          });
+        },
+        
+        // Approach 3: Use a reliable CORS proxy
+        async () => {
+          const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(state.backgroundImageUrl!)}`;
+          const response = await fetch(proxyUrl);
+          if (!response.ok) throw new Error(`Proxy failed: ${response.status}`);
+          const blob = await response.blob();
+          return URL.createObjectURL(blob);
+        },
+        
+        // Approach 4: Try another CORS proxy
+        async () => {
+          const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(state.backgroundImageUrl!)}`;
+          const response = await fetch(proxyUrl);
+          if (!response.ok) throw new Error(`Proxy failed: ${response.status}`);
+          const blob = await response.blob();
+          return URL.createObjectURL(blob);
+        }
+      ];
+      
+      // Try each approach until one works
+      for (let i = 0; i < approaches.length; i++) {
+        try {
+          console.log(`Trying approach ${i + 1}...`);
+          convertedBackgroundUrl = await approaches[i]();
+          console.log(`Approach ${i + 1} succeeded!`);
+          break;
+        } catch (error) {
+          console.warn(`Approach ${i + 1} failed:`, error);
+          if (i === approaches.length - 1) {
+            console.warn('All approaches failed, using original URL');
+          }
+        }
+      }
+    }
+    
     // Get the actual rendered dimensions of the preview container
     const rect = canvasRef.current.getBoundingClientRect();
     const currentWidth = rect.width;
@@ -163,6 +253,15 @@ function App() {
     originalStyle.width = canvasRef.current.style.width;
     originalStyle.height = canvasRef.current.style.height;
     
+    // Get the current background style from React state
+    const currentBackgroundStyle = getBackgroundStyle();
+    
+    // Create a modified background style with the converted URL if available
+    let captureBackgroundStyle = { ...currentBackgroundStyle };
+    if (state.background === 'web-image' && convertedBackgroundUrl && convertedBackgroundUrl !== state.backgroundImageUrl) {
+      captureBackgroundStyle.background = `url('${convertedBackgroundUrl}')`;
+    }
+    
     // Find and hide the silhouette figure
     const silhouetteFigure = canvasRef.current.querySelector('.silhouette-figure') as HTMLElement;
     let originalSilhouetteDisplay = '';
@@ -179,6 +278,20 @@ function App() {
     canvasRef.current.style.width = currentWidth + 'px';
     canvasRef.current.style.height = currentHeight + 'px';
     
+    // Preserve the background styles from React state
+    if (captureBackgroundStyle.background) {
+      canvasRef.current.style.background = captureBackgroundStyle.background as string;
+    }
+    if (captureBackgroundStyle.backgroundSize) {
+      canvasRef.current.style.backgroundSize = captureBackgroundStyle.backgroundSize as string;
+    }
+    if (captureBackgroundStyle.backgroundPosition) {
+      canvasRef.current.style.backgroundPosition = captureBackgroundStyle.backgroundPosition as string;
+    }
+    if (captureBackgroundStyle.backgroundRepeat) {
+      canvasRef.current.style.backgroundRepeat = captureBackgroundStyle.backgroundRepeat as string;
+    }
+    
     // Wait for browser to apply styles
     await new Promise((r) => setTimeout(r, 50));
     
@@ -187,6 +300,8 @@ function App() {
       width: targetWidth,
       height: targetHeight,
       scale: 1,
+      allowTaint: true,
+      useCORS: true,
     });
     
     // Revert all styles
@@ -204,6 +319,11 @@ function App() {
     // Restore silhouette figure visibility
     if (silhouetteFigure) {
       silhouetteFigure.style.display = originalSilhouetteDisplay;
+    }
+    
+    // Clean up converted URL if it was created (only for blob URLs)
+    if (convertedBackgroundUrl && convertedBackgroundUrl !== state.backgroundImageUrl && convertedBackgroundUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(convertedBackgroundUrl);
     }
     
     const gameStyle = state.gameStyle;
