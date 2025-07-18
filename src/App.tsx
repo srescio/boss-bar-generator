@@ -78,7 +78,7 @@ function App() {
   const handleDownload = async () => {
     if (!canvasRef.current) return;
     let scale = 1;
-    let width = 800;s
+    let width = 800;
     let height = 160;
     let originalStyle: Partial<CSSStyleDeclaration> = {};
     if (state.format === 'video-call') {
