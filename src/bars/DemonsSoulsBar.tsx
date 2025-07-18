@@ -15,15 +15,19 @@ const DemonsSoulsBar: React.FC<DemonsSoulsBarProps> = (props) => {
   const overlap = Math.round(2 * scaleFactor);
 
   return (
-    <div style={{
-      width: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginTop: 24 * scaleFactor,
-      fontFamily: 'serif',
-    }}>
+    <div 
+      id="demons-souls-bar"
+      className="boss-bar"
+      style={{
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 24 * scaleFactor,
+        fontFamily: 'serif',
+      }}
+    >
       <div style={{
         fontSize: 40 * scaleFactor,
         fontWeight: 700,

@@ -65,16 +65,20 @@ const Tekken2Bar: React.FC<Tekken2BarProps> = (props) => {
   const barHeight = Math.round(32 * scaleFactor);
 
   return (
-    <div style={{
-      width: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: 8 * scaleFactor,
-      marginTop: 24 * scaleFactor,
-      fontFamily: 'sans-serif',
-    }}>
+    <div 
+      id="tekken2-bar"
+      className="boss-bar"
+      style={{
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8 * scaleFactor,
+        marginTop: 24 * scaleFactor,
+        fontFamily: 'sans-serif',
+      }}
+    >
       {/* Bars row */}
       <div style={{ width: '100%', display: 'flex', flexDirection: 'row', gap: 16 * scaleFactor, alignItems: 'center' }}>
         {/* Player 1 Bar */}
