@@ -112,7 +112,7 @@ h1 {
   display: block;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 710px) {
   .main-container {
     flex-direction: column;
   }
