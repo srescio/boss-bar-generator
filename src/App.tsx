@@ -18,6 +18,7 @@ type BossBarState = {
   background: string;
   backgroundImageUrl?: string;
   backgroundImageFile?: File;
+  backgroundSize: string;
   format: string;
   scale: number;
   [key: string]: string | number | undefined | File | any;
@@ -30,6 +31,7 @@ const defaultState: BossBarState = (() => {
   const state: BossBarState = {
     gameStyle: style,
     background: 'transparent',
+    backgroundSize: 'cover', // Default to cover
     format: 'video-call',
     scale: 5,
   };
@@ -54,6 +56,10 @@ function App() {
           loaded[f.key] = f.default ?? '';
         }
       });
+    }
+    // Ensure backgroundSize is set to cover by default if not present
+    if (loaded.backgroundSize === undefined) {
+      loaded.backgroundSize = 'cover';
     }
     return loaded;
   });
@@ -351,17 +357,10 @@ function App() {
   const getBackgroundStyle = (): React.CSSProperties => {
     if (state.background === 'transparent') {
       return { background: 'transparent' };
-    } else if (state.background === 'web-image' && state.backgroundImageUrl) {
+    } else if ((state.background === 'web-image' || state.background === 'disk-image') && state.backgroundImageUrl) {
       return { 
         background: `url('${state.backgroundImageUrl}')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center center',
-        backgroundRepeat: 'no-repeat'
-      };
-    } else if (state.background === 'disk-image' && state.backgroundImageUrl) {
-      return { 
-        background: `url('${state.backgroundImageUrl}')`,
-        backgroundSize: 'cover',
+        backgroundSize: state.backgroundSize,
         backgroundPosition: 'center center',
         backgroundRepeat: 'no-repeat'
       };
@@ -462,6 +461,16 @@ function App() {
               ))}
             </select>
           </label>
+          {state.background !== 'transparent' && (
+            <label>
+              Background Size:<br />
+              <select name="backgroundSize" value={state.backgroundSize} onChange={handleChange}>
+                <option value="cover">Cover (fills container, may crop)</option>
+                <option value="contain">Contain (fits in container, may show gaps)</option>
+                <option value="auto">Auto (original size)</option>
+              </select>
+            </label>
+          )}
           <label>
             Format:<br />
             <select name="format" value={state.format} onChange={handleChange}>
