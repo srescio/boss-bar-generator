@@ -47,6 +47,10 @@ function App() {
   const [state, setState] = useState<BossBarState>(() => {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
     let loaded = saved ? JSON.parse(saved) : { ...defaultState };
+    
+    console.log('Loading state from localStorage:', saved);
+    console.log('Parsed state:', loaded);
+    
     // Ensure all keys from the current config are present
     const style = loaded.gameStyle || defaultState.gameStyle;
     const config = bossBars[style];
@@ -61,6 +65,8 @@ function App() {
     if (loaded.backgroundSize === undefined) {
       loaded.backgroundSize = 'cover';
     }
+    
+    console.log('Final loaded state:', loaded);
     return loaded;
   });
   const scale = state.scale;
@@ -81,9 +87,14 @@ function App() {
     localStorage.removeItem(LOCAL_STORAGE_KEY);
   };
 
+  // Force reset backgroundSize to cover for debugging
+  const forceResetBackgroundSize = () => {
+    setState((prev) => ({ ...prev, backgroundSize: 'cover' }));
+    console.log('Forced backgroundSize reset to cover');
+  };
+
   const handleBackgroundChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { value } = e.target;
-    setState((prev) => ({ ...prev, background: value }));
     
     if (value === 'web-image') {
       const url = prompt('Enter image URL:');
@@ -91,7 +102,13 @@ function App() {
         // Basic URL validation
         try {
           new URL(url);
-          setState((prev) => ({ ...prev, backgroundImageUrl: url }));
+          setState((prev) => ({ 
+            ...prev, 
+            background: value,
+            backgroundImageUrl: url,
+            // Ensure backgroundSize is preserved or set to cover if not present
+            backgroundSize: prev.backgroundSize || 'cover'
+          }));
         } catch {
           alert('Please enter a valid URL');
           setState((prev) => ({ ...prev, background: 'transparent' }));
@@ -110,8 +127,11 @@ function App() {
           const objectUrl = URL.createObjectURL(file);
           setState((prev) => ({ 
             ...prev, 
+            background: value,
             backgroundImageFile: file,
-            backgroundImageUrl: objectUrl // Store the object URL for consistency
+            backgroundImageUrl: objectUrl,
+            // Ensure backgroundSize is preserved or set to cover if not present
+            backgroundSize: prev.backgroundSize || 'cover'
           }));
         } else {
           setState((prev) => ({ ...prev, background: 'transparent' }));
@@ -122,6 +142,7 @@ function App() {
       // Clear image data when switching to transparent
       setState((prev) => ({ 
         ...prev, 
+        background: value,
         backgroundImageUrl: undefined, 
         backgroundImageFile: undefined 
       }));
@@ -250,7 +271,7 @@ function App() {
     // Store original styles
     originalStyle.border = canvasRef.current.style.border;
     originalStyle.padding = canvasRef.current.style.padding;
-    originalStyle.background = canvasRef.current.style.background;
+    originalStyle.backgroundImage = canvasRef.current.style.backgroundImage;
     originalStyle.backgroundSize = canvasRef.current.style.backgroundSize;
     originalStyle.backgroundPosition = canvasRef.current.style.backgroundPosition;
     originalStyle.backgroundRepeat = canvasRef.current.style.backgroundRepeat;
@@ -265,7 +286,7 @@ function App() {
     // Create a modified background style with the converted URL if available
     let captureBackgroundStyle = { ...currentBackgroundStyle };
     if (state.background === 'web-image' && convertedBackgroundUrl && convertedBackgroundUrl !== state.backgroundImageUrl) {
-      captureBackgroundStyle.background = `url('${convertedBackgroundUrl}')`;
+      captureBackgroundStyle.backgroundImage = `url('${convertedBackgroundUrl}')`;
     }
     
     // Find and hide the silhouette figure
@@ -286,8 +307,8 @@ function App() {
     canvasRef.current.style.height = currentHeight + 'px';
     
     // Preserve the background styles from React state
-    if (captureBackgroundStyle.background) {
-      canvasRef.current.style.background = captureBackgroundStyle.background as string;
+    if (captureBackgroundStyle.backgroundImage) {
+      canvasRef.current.style.backgroundImage = captureBackgroundStyle.backgroundImage as string;
     }
     if (captureBackgroundStyle.backgroundSize) {
       canvasRef.current.style.backgroundSize = captureBackgroundStyle.backgroundSize as string;
@@ -314,7 +335,7 @@ function App() {
     // Revert all styles
     canvasRef.current.style.border = originalStyle.border || '';
     canvasRef.current.style.padding = originalStyle.padding || '';
-    canvasRef.current.style.background = originalStyle.background || '';
+    canvasRef.current.style.backgroundImage = originalStyle.backgroundImage || '';
     canvasRef.current.style.backgroundSize = originalStyle.backgroundSize || '';
     canvasRef.current.style.backgroundPosition = originalStyle.backgroundPosition || '';
     canvasRef.current.style.backgroundRepeat = originalStyle.backgroundRepeat || '';
@@ -358,8 +379,13 @@ function App() {
     if (state.background === 'transparent') {
       return { background: 'transparent' };
     } else if ((state.background === 'web-image' || state.background === 'disk-image') && state.backgroundImageUrl) {
+      console.log('Background style applied:', {
+        background: state.background,
+        backgroundSize: state.backgroundSize,
+        url: state.backgroundImageUrl
+      });
       return { 
-        background: `url('${state.backgroundImageUrl}')`,
+        backgroundImage: `url('${state.backgroundImageUrl}')`,
         backgroundSize: state.backgroundSize,
         backgroundPosition: 'center center',
         backgroundRepeat: 'no-repeat'
@@ -481,6 +507,11 @@ function App() {
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={handleDownload}>Download PNG</button>
             <button onClick={handleClear}>Clear All</button>
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button onClick={forceResetBackgroundSize} style={{ fontSize: '0.8rem', padding: '0.3em' }}>
+              Force Reset Background Size
+            </button>
           </div>
         </div>
         <div className='preview-container-wrapper'>
