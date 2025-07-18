@@ -78,7 +78,7 @@ function App() {
   const handleDownload = async () => {
     if (!canvasRef.current) return;
     let scale = 1;
-    let width = 800;
+    let width = 800;s
     let height = 160;
     let originalStyle: Partial<CSSStyleDeclaration> = {};
     if (state.format === 'video-call') {
@@ -152,7 +152,7 @@ function App() {
       }}
     >
       <h1>Boss Bar Generator</h1>
-      <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
+      <div className='main-container'>
         <div className="form-container">
           <label>
             Game Style:<br />
@@ -244,23 +244,12 @@ function App() {
             <button onClick={handleClear}>Clear All</button>
           </div>
         </div>
-        <div>
+        <div className='preview-container-wrapper'>
           <h2>Live Preview</h2>
-          <div
+          <div className={`preview-container ${state.format === 'video-call' ? 'video-call' : ''}`}
             ref={canvasRef}
             style={{
-              minWidth: state.format === 'video-call' ? 640 : 400,
-              minHeight: state.format === 'video-call' ? 360 : 80,
-              width: state.format === 'video-call' ? 640 : 400,
-              height: state.format === 'video-call' ? 360 : 80,
-              padding: 16,
               background: state.background === 'transparent' ? 'transparent' : state.background,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'flex-start',
-              gap: 8,
-              border: '2px solid #bfa76a',
               ...getBarStyle(),
             }}
           >
