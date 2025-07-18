@@ -7,10 +7,8 @@ const GAME_STYLES = Object.entries(bossBars).map(([value, config]) => ({ name: c
 
 const BACKGROUNDS = [
   { name: 'Transparent', value: 'transparent' },
-  { name: 'Dark', value: '#222' },
-  { name: 'Light', value: '#eee' },
-  { name: 'Blue', value: '#3b82f6' },
-  { name: 'Red', value: '#ef4444' },
+  { name: 'Image from Web (URL)', value: 'web-image' },
+  { name: 'Image from Disk', value: 'disk-image' },
 ];
 
 const LOCAL_STORAGE_KEY = 'boss-bar-generator';
@@ -18,9 +16,11 @@ const LOCAL_STORAGE_KEY = 'boss-bar-generator';
 type BossBarState = {
   gameStyle: string;
   background: string;
+  backgroundImageUrl?: string;
+  backgroundImageFile?: File;
   format: string;
   scale: number;
-  [key: string]: string | number | undefined;
+  [key: string]: string | number | undefined | File | any;
 };
 
 // Dynamically generate defaultState using bossBars config
@@ -75,6 +75,53 @@ function App() {
     localStorage.removeItem(LOCAL_STORAGE_KEY);
   };
 
+  const handleBackgroundChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value } = e.target;
+    setState((prev) => ({ ...prev, background: value }));
+    
+    if (value === 'web-image') {
+      const url = prompt('Enter image URL:');
+      if (url) {
+        // Basic URL validation
+        try {
+          new URL(url);
+          setState((prev) => ({ ...prev, backgroundImageUrl: url }));
+        } catch {
+          alert('Please enter a valid URL');
+          setState((prev) => ({ ...prev, background: 'transparent' }));
+        }
+      } else {
+        setState((prev) => ({ ...prev, background: 'transparent' }));
+      }
+    } else if (value === 'disk-image') {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/jpeg,image/jpg,image/png,image/gif,image/webp';
+      input.onchange = (event) => {
+        const file = (event.target as HTMLInputElement).files?.[0];
+        if (file) {
+          // Create object URL and store it
+          const objectUrl = URL.createObjectURL(file);
+          setState((prev) => ({ 
+            ...prev, 
+            backgroundImageFile: file,
+            backgroundImageUrl: objectUrl // Store the object URL for consistency
+          }));
+        } else {
+          setState((prev) => ({ ...prev, background: 'transparent' }));
+        }
+      };
+      input.click();
+    } else {
+      // Clear image data when switching to transparent
+      setState((prev) => ({ 
+        ...prev, 
+        backgroundImageUrl: undefined, 
+        backgroundImageFile: undefined 
+      }));
+    }
+  };
+
   const handleDownload = async () => {
     if (!canvasRef.current) return;
     
@@ -108,6 +155,9 @@ function App() {
     originalStyle.border = canvasRef.current.style.border;
     originalStyle.padding = canvasRef.current.style.padding;
     originalStyle.background = canvasRef.current.style.background;
+    originalStyle.backgroundSize = canvasRef.current.style.backgroundSize;
+    originalStyle.backgroundPosition = canvasRef.current.style.backgroundPosition;
+    originalStyle.backgroundRepeat = canvasRef.current.style.backgroundRepeat;
     originalStyle.transform = canvasRef.current.style.transform;
     originalStyle.transformOrigin = canvasRef.current.style.transformOrigin;
     originalStyle.width = canvasRef.current.style.width;
@@ -129,10 +179,6 @@ function App() {
     canvasRef.current.style.width = currentWidth + 'px';
     canvasRef.current.style.height = currentHeight + 'px';
     
-    if (state.background === 'transparent') {
-      canvasRef.current.style.background = 'transparent';
-    }
-    
     // Wait for browser to apply styles
     await new Promise((r) => setTimeout(r, 50));
     
@@ -147,6 +193,9 @@ function App() {
     canvasRef.current.style.border = originalStyle.border || '';
     canvasRef.current.style.padding = originalStyle.padding || '';
     canvasRef.current.style.background = originalStyle.background || '';
+    canvasRef.current.style.backgroundSize = originalStyle.backgroundSize || '';
+    canvasRef.current.style.backgroundPosition = originalStyle.backgroundPosition || '';
+    canvasRef.current.style.backgroundRepeat = originalStyle.backgroundRepeat || '';
     canvasRef.current.style.transform = originalStyle.transform || '';
     canvasRef.current.style.transformOrigin = originalStyle.transformOrigin || '';
     canvasRef.current.style.width = originalStyle.width || '';
@@ -176,6 +225,27 @@ function App() {
       style.fontFamily = config.fontFamily;
     }
     return style;
+  };
+
+  const getBackgroundStyle = (): React.CSSProperties => {
+    if (state.background === 'transparent') {
+      return { background: 'transparent' };
+    } else if (state.background === 'web-image' && state.backgroundImageUrl) {
+      return { 
+        background: `url('${state.backgroundImageUrl}')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      };
+    } else if (state.background === 'disk-image' && state.backgroundImageUrl) {
+      return { 
+        background: `url('${state.backgroundImageUrl}')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      };
+    }
+    return { background: 'transparent' };
   };
 
   return (
@@ -265,7 +335,7 @@ function App() {
           </label>
           <label>
             Background:<br />
-            <select name="background" value={state.background} onChange={handleChange}>
+            <select name="background" value={state.background} onChange={handleBackgroundChange}>
               {BACKGROUNDS.map((b) => (
                 <option key={b.value} value={b.value}>{b.name}</option>
               ))}
@@ -288,7 +358,7 @@ function App() {
           <div className={`preview-container ${state.format === 'video-call' ? 'video-call' : ''}`}
             ref={canvasRef}
             style={{
-              background: state.background === 'transparent' ? 'transparent' : state.background,
+              ...getBackgroundStyle(),
               ...getBarStyle(),
             }}
           >
