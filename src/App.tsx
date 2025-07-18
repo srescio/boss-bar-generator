@@ -6,9 +6,9 @@ import { bossBars } from './bossBars';
 const GAME_STYLES = Object.entries(bossBars).map(([value, config]) => ({ name: config.label, value }));
 
 const BACKGROUNDS = [
-  { name: 'Transparent', value: 'transparent' },
-  { name: 'Image from Web (URL)', value: 'web-image' },
-  { name: 'Image from Disk', value: 'disk-image' },
+  { name: '🫥 Transparent', value: 'transparent' },
+  { name: '🌐 Image from Web (URL)', value: 'web-image' },
+  { name: '💽 Image from Disk', value: 'disk-image' },
 ];
 
 const LOCAL_STORAGE_KEY = 'boss-bar-generator';
@@ -366,11 +366,14 @@ function App() {
         backgroundSize: state.backgroundSize,
         url: state.backgroundImageUrl
       });
+      
+      const backgroundRepeat = state.backgroundSize === 'auto' ? 'repeat' : 'no-repeat';
+      
       return { 
         backgroundImage: `url('${state.backgroundImageUrl}')`,
         backgroundSize: state.backgroundSize,
         backgroundPosition: 'center center',
-        backgroundRepeat: 'no-repeat'
+        backgroundRepeat: backgroundRepeat
       };
     }
     return { background: 'transparent' };
@@ -520,7 +523,7 @@ function App() {
             </select>
           </label>
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={handleDownload}>Download PNG</button>
+            <button onClick={handleDownload}>⬇️ Download image</button>
             <button onClick={handleClear}>Clear All</button>
           </div>
         </div>
