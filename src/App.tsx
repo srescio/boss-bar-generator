@@ -234,14 +234,14 @@ function App() {
       return { 
         background: `url('${state.backgroundImageUrl}')`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center',
+        backgroundPosition: 'center center',
         backgroundRepeat: 'no-repeat'
       };
     } else if (state.background === 'disk-image' && state.backgroundImageUrl) {
       return { 
         background: `url('${state.backgroundImageUrl}')`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center',
+        backgroundPosition: 'center center',
         backgroundRepeat: 'no-repeat'
       };
     }
