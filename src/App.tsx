@@ -77,47 +77,73 @@ function App() {
 
   const handleDownload = async () => {
     if (!canvasRef.current) return;
-    let scale = 1;
-    let width = 640;
-    let height = 160;
-    let originalStyle: Partial<CSSStyleDeclaration> = {};
-    if (state.format === 'video-call') {
-      scale = 3; // 640*3=1920, 360*3=1080
-      width = 640;
-      height = 360;
-      // Apply scale transform
-      canvasRef.current.style.transform = `scale(${scale})`;
-      canvasRef.current.style.transformOrigin = 'top left';
-      canvasRef.current.style.width = width + 'px';
-      canvasRef.current.style.height = height + 'px';
+    
+    // Get the actual rendered dimensions of the preview container
+    const rect = canvasRef.current.getBoundingClientRect();
+    const currentWidth = rect.width;
+    const currentHeight = rect.height;
+    
+    // Calculate target dimensions for high-res output
+    let targetWidth = 1920;
+    let targetHeight = 1080;
+    
+    // If format is video-call, use 16:9 aspect ratio (1920x1080)
+    // If format is bar-only, maintain the aspect ratio but scale up to reasonable size
+    if (state.format === 'bar-only') {
+      const aspectRatio = currentWidth / currentHeight;
+      // Scale up to a reasonable size while maintaining aspect ratio
+      // For bar-only, we'll use a height of around 400px and scale width accordingly
+      targetHeight = 400;
+      targetWidth = Math.round(targetHeight * aspectRatio);
     }
-    // Remove border and padding for download
+    
+    // Calculate the scale factor needed
+    const scaleX = targetWidth / currentWidth;
+    const scaleY = targetHeight / currentHeight;
+    const scale = Math.min(scaleX, scaleY); // Use the smaller scale to maintain aspect ratio
+    
+    let originalStyle: Partial<CSSStyleDeclaration> = {};
+    
+    // Store original styles
     originalStyle.border = canvasRef.current.style.border;
     originalStyle.padding = canvasRef.current.style.padding;
     originalStyle.background = canvasRef.current.style.background;
+    originalStyle.transform = canvasRef.current.style.transform;
+    originalStyle.transformOrigin = canvasRef.current.style.transformOrigin;
+    originalStyle.width = canvasRef.current.style.width;
+    originalStyle.height = canvasRef.current.style.height;
+    
+    // Apply temporary styles for high-res capture
     canvasRef.current.style.border = 'none';
     canvasRef.current.style.padding = '0';
+    canvasRef.current.style.transform = `scale(${scale})`;
+    canvasRef.current.style.transformOrigin = 'top left';
+    canvasRef.current.style.width = currentWidth + 'px';
+    canvasRef.current.style.height = currentHeight + 'px';
+    
     if (state.background === 'transparent') {
       canvasRef.current.style.background = 'transparent';
     }
+    
     // Wait for browser to apply styles
     await new Promise((r) => setTimeout(r, 50));
+    
     const canvas = await html2canvas(canvasRef.current, {
       backgroundColor: null,
-      width: width * scale,
-      height: height * scale,
+      width: targetWidth,
+      height: targetHeight,
       scale: 1,
     });
-    // Revert scale and styles
-    if (state.format === 'video-call') {
-      canvasRef.current.style.transform = '';
-      canvasRef.current.style.transformOrigin = '';
-      canvasRef.current.style.width = '';
-      canvasRef.current.style.height = '';
-    }
+    
+    // Revert all styles
     canvasRef.current.style.border = originalStyle.border || '';
     canvasRef.current.style.padding = originalStyle.padding || '';
     canvasRef.current.style.background = originalStyle.background || '';
+    canvasRef.current.style.transform = originalStyle.transform || '';
+    canvasRef.current.style.transformOrigin = originalStyle.transformOrigin || '';
+    canvasRef.current.style.width = originalStyle.width || '';
+    canvasRef.current.style.height = originalStyle.height || '';
+    
     const gameStyle = state.gameStyle;
     const format = state.format;
     const pageUrl = window.location.href;
