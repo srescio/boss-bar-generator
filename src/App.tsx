@@ -169,7 +169,7 @@ function App() {
     <div
       style={{
         minHeight: '100vh',
-        background: `linear-gradient(rgba(24,24,27,0.85), rgba(24,24,27,0.85)), url('${process.env.PUBLIC_URL}/meme/3dragons.jpg')`,
+        background: `linear-gradient(rgba(24,24,27,0.85), rgba(24,24,27,0.85)), url('${process.env.PUBLIC_URL}/assets/3dragons.jpg')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -294,6 +294,13 @@ function App() {
               });
               return <BarComponent {...barProps} />;
             })()}
+            <figure className="silhouette-figure">
+              <img 
+                src={`${process.env.PUBLIC_URL}/assets/silhouette.png`}
+                alt="Silhouette"
+                className="silhouette-image"
+              />
+            </figure>
           </div>
         </div>
       </div>

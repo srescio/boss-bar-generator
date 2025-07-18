@@ -68,6 +68,7 @@ h1 {
   border: 2px solid #bfa76a;
   padding: 16px;
   box-sizing: border-box;
+  position: relative;
 }
 
 .form-container {
@@ -92,4 +93,19 @@ h1 {
   .preview-container-wrapper {
     width: 100%;
   }
+}
+
+.silhouette-figure {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  z-index: 0;
+}
+
+.silhouette-image {
+  max-width: 200px;
+  height: auto;
+  display: block;
 }
