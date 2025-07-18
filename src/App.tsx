@@ -272,7 +272,8 @@ function App() {
     
     // Apply temporary styles for high-res capture
     canvasRef.current.style.border = 'none';
-    canvasRef.current.style.padding = '0';
+    // Keep original padding instead of setting to 0
+    // canvasRef.current.style.padding = '0';
     canvasRef.current.style.transform = `scale(${scale})`;
     canvasRef.current.style.transformOrigin = 'top left';
     canvasRef.current.style.width = currentWidth + 'px';
