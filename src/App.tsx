@@ -378,15 +378,10 @@ function App() {
 
   return (
     <div
+      className="app-background"
       style={{
-        minHeight: '100vh',
-        background: `linear-gradient(rgba(24,24,27,0.85), rgba(24,24,27,0.85)), url('${process.env.PUBLIC_URL}/assets/3dragons.jpg')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        color: '#fff',
-        padding: 24,
-      }}
+        '--bg-image': `url('${process.env.PUBLIC_URL}/assets/3dragons.jpg')`
+      } as React.CSSProperties}
     >
       {/* Loading Overlay */}
       {isLoading && (
