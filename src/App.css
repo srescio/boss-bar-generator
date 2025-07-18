@@ -82,17 +82,10 @@ h1 {
   aspect-ratio: 16 / 9;
 }
 
-@media (max-width: 600px) {
-  .main-container {
-    flex-direction: column;
-  }
-  .form-container {
-    width: 100%;
-    max-width: 100%;
-  }
-  .preview-container-wrapper {
-    width: 100%;
-  }
+
+.boss-bar {
+  position: relative;
+  z-index: 1;
 }
 
 .silhouette-figure {
@@ -105,7 +98,22 @@ h1 {
 }
 
 .silhouette-image {
-  max-width: 200px;
-  height: auto;
+  width: 40vw;
   display: block;
+}
+
+@media (max-width: 600px) {
+  .main-container {
+    flex-direction: column;
+  }
+  .form-container {
+    width: 100%;
+    max-width: 100%;
+  }
+  .preview-container-wrapper {
+    width: 100%;
+  }
+  .silhouette-image {
+    width: 60vw;
+  }
 }
