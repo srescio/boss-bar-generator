@@ -60,6 +60,47 @@ describe('Boss Bar Generator App', () => {
     // Check reset button
     cy.get('button').contains('🔄 Reset').should('have.attr', 'aria-label', 'Reset all settings to default')
   })
+
+  it('should update live preview when Genshin form fields are changed', () => {
+    // Test data for the form fields
+    const testData = {
+      bossName: 'Test Boss Name',
+      titleLore: 'Test Title Lore',
+      level: 'Lv. 999'
+    }
+
+    // Clear and update Boss Name field
+    cy.get('input[name="GenshinBar_bossname"]')
+      .clear()
+      .type(testData.bossName)
+    
+    // Verify the change appears in live preview
+    cy.get('.genshin-boss-name')
+      .should('contain.text', testData.bossName)
+
+    // Clear and update Title Lore field
+    cy.get('input[name="GenshinBar_titlelore"]')
+      .clear()
+      .type(testData.titleLore)
+    
+    // Verify the change appears in live preview
+    cy.get('.genshin-title-lore')
+      .should('contain.text', testData.titleLore)
+
+    // Clear and update Level field
+    cy.get('input[name="GenshinBar_level"]')
+      .clear()
+      .type(testData.level)
+    
+    // Verify the change appears in live preview
+    cy.get('.genshin-level')
+      .should('contain.text', testData.level)
+
+    // Verify all changes are reflected together in the preview
+    cy.get('.genshin-boss-name').should('contain.text', testData.bossName)
+    cy.get('.genshin-title-lore').should('contain.text', testData.titleLore)
+    cy.get('.genshin-level').should('contain.text', testData.level)
+  })
 })
 
 export {} 
