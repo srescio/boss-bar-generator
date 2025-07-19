@@ -126,13 +126,18 @@ export const createCloneForCapture = (
   clone.style.left = '-9999px';
   clone.style.top = '-9999px';
   clone.style.zIndex = '-9999';
+  clone.style.pointerEvents = 'none'; // Prevent any interaction
+  clone.style.userSelect = 'none'; // Prevent text selection
   document.body.appendChild(clone);
   
-  // Find and hide the silhouette figure in the clone
+  // Find and hide the silhouette figure in the clone (only in clone, not original)
   const silhouetteFigure = clone.querySelector('.silhouette-figure') as HTMLElement;
   if (silhouetteFigure) {
     silhouetteFigure.style.display = 'none';
   }
+  
+  // Ensure the clone has a unique ID to prevent any conflicts
+  clone.id = 'capture-clone-' + Date.now();
   
   // Apply high-res capture styles to the clone
   clone.style.border = 'none';
@@ -155,6 +160,10 @@ export const createCloneForCapture = (
   if (backgroundStyle.backgroundRepeat) {
     clone.style.backgroundRepeat = backgroundStyle.backgroundRepeat as string;
   }
+  
+  // SVG-based Honkai Impact bars are naturally canvas-compatible
+  // Add a special class to ensure styles are applied during capture
+  clone.classList.add('capture-mode');
   
   return clone;
 };

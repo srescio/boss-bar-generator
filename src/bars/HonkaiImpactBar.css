@@ -11,16 +11,9 @@
   overflow: visible;
 }
 
-/* Top slim bar */
-.honkai-top-bar {
-  width: 100%;
-  height: var(--top-bar-height, 8px);
-  background: linear-gradient(90deg, #4ade80, #22c55e);
-  border-radius: 4px;
-  margin-bottom: 4px;
-  box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
-  /* Tilted edges effect - parallelogram shape with fixed angles */
-  clip-path: polygon(2px 0, calc(100% - 0px) 0px, calc(100% - 2px) 100%, 0px 100%);
+/* Top bar container */
+.honkai-top-bar-container {
+  /* Styles handled by SVG */
 }
 
 /* Bottom segmented bar container */
@@ -32,30 +25,9 @@
   position: relative;
 }
 
-/* Individual segments */
-.honkai-segment {
-  flex: 1;
-  height: 100%;
-  background: linear-gradient(90deg, #10b981, #059669);
-  border-radius: 3px;
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
-  position: relative;
-  /* Tilted edges effect - parallelogram shape with fixed angles */
-  clip-path: polygon(2px 0, calc(100% - 0px) 0px, calc(100% - 2px) 100%, 0px 100%);
-}
-
-/* Add subtle inner glow to segments */
-.honkai-segment::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  border-radius: 3px;
-  /* Tilted edges effect - parallelogram shape with fixed angles */
-  clip-path: polygon(2px 0, calc(100% - 0px) 0px, calc(100% - 2px) 100%, 0px 100%);
+/* Segments container */
+.honkai-segments-container {
+  /* Styles handled by SVG */
 }
 
 /* Multiplier on right of bottom bar */
@@ -89,9 +61,9 @@
 }
 
 /* Hover effects for interactivity */
-.honkai-top-bar:hover,
-.honkai-segment:hover {
-  filter: brightness(1.2);
+.honkai-top-bar-container:hover svg polygon,
+.honkai-segments-container:hover svg polygon {
+  filter: brightness(1.2) drop-shadow(0 0 10px rgba(74, 222, 128, 0.3));
   transition: filter 0.2s ease;
 }
 
@@ -118,4 +90,10 @@
     font-size: 14px;
     right: -35px;
   }
+}
+
+/* Capture mode styles for SVG-based approach */
+.capture-mode .honkai-top-bar-container svg,
+.capture-mode .honkai-segments-container svg {
+  /* SVG elements are naturally canvas-compatible */
 } 
