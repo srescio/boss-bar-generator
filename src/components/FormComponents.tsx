@@ -101,12 +101,14 @@ const FormatSelect: React.FC<{ value: string; onChange: (e: React.ChangeEvent<HT
 const ActionButtons: React.FC<{ onDownload: () => void; onClear: () => void }> = ({ onDownload, onClear }) => (
   <div className="action-buttons" role="group" aria-label="Boss bar actions">
     <button 
+      type="button"
       onClick={onDownload}
       aria-label="Download boss bar image"
     >
       ⬇️ Download
     </button>
     <button 
+      type="button"
       onClick={onClear}
       aria-label="Reset all settings to default"
     >
@@ -123,7 +125,7 @@ const FormComponents: React.FC<FormComponentsProps> = ({
   onClear 
 }) => {
   return (
-    <form className="form-container" role="form" aria-label="Boss bar configuration form">
+    <form className="form-container" aria-label="Boss bar configuration form">
       <GameStyleSelect value={state.gameStyle} onChange={onFieldChange} />
       
       {bossBars[state.gameStyle]?.fields.map((field, idx, arr) => {

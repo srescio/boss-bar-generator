@@ -1,0 +1,20 @@
+{
+  "extends": "@istanbuljs/nyc-config-typescript",
+  "all": true,
+  "check-coverage": true,
+  "reporter": [
+    "text",
+    "lcov",
+    "html"
+  ],
+  "exclude": [
+    "coverage/**",
+    "cypress/**",
+    "src/**/*.cy.{js,jsx,ts,tsx}",
+    "src/**/*.test.{js,jsx,ts,tsx}",
+    "src/**/*.spec.{js,jsx,ts,tsx}",
+    "src/index.tsx",
+    "src/reportWebVitals.ts",
+    "src/setupTests.ts"
+  ]
+} 

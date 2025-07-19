@@ -1,37 +1,102 @@
 # Boss Bar Generator
 
-A web app to generate boss bar overlays for games (e.g., Minecraft, WoW, FF). Select a style, input up to 3 text fields, choose a background, and download the result as a PNG with alpha transparency.
+Generate and download custom boss bars in the style of Genshin Impact, Demon's Souls, Tekken 2, and Honkai Impact. Free, fast, and easy to use for stream overlays, memes, and gaming content creation!
 
 ## Features
-- Select game style (Minecraft, WoW, FF)
-- Input up to 3 text fields
-- Select background color (or transparent)
-- Live preview on canvas
-- Download as PNG (with alpha)
-- Fields persist via localStorage (with clear/reset option)
-- SPA: No backend required for production
 
-## Usage
+- Multiple game styles (Genshin Impact, Demon's Souls, Tekken 2, Honkai Impact)
+- Customizable text fields and colors
+- High-resolution downloads (up to 1920x1080)
+- Free and easy to use
+- No registration required
 
-### Local Development
+## Development
 
-```
+### Prerequisites
+
+- Node.js (v14 or higher)
+- npm or yarn
+
+### Installation
+
+```bash
 npm install
+```
+
+### Running the Application
+
+```bash
 npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view in your browser.
+The application will be available at `http://localhost:3000`.
 
-### Production Build
+### Building for Production
 
-```
+```bash
 npm run build
 ```
 
-The static files will be in the `build/` directory. Upload the contents of `build/` to your LAMP (Apache) web hosting or subdomain (e.g., `bossbar.simonerescio.it`). No Node.js server is required for production.
+## Testing
+
+This project uses Cypress Component Testing for comprehensive functional testing with code coverage.
+
+### Running Tests
+
+```bash
+# Open Cypress Component Test Runner (interactive)
+npm run cypress:component:open
+
+# Run Cypress Component Tests (headless)
+npm run cypress:component
+
+# Run tests with code coverage
+npm run test:coverage
+```
+
+### Test Coverage
+
+The tests are designed to:
+- Verify default game style (Genshin Impact) is selected
+- Check that default texts appear in both form inputs and live preview
+- Validate proper form structure and accessibility
+- Ensure action buttons have proper ARIA labels
+- Test component interactions and state changes
+
+### Test Structure
+
+- **Component Tests**: Located in `src/**/*.cy.tsx` files
+- **Coverage Reports**: Generated in `coverage/` directory
+- **Configuration**: See `cypress.config.ts` and `.nycrc`
+
+### Adding New Tests
+
+1. Create a new `.cy.tsx` file in the same directory as your component
+2. Import the component and write tests using Cypress commands
+3. Use `cy.mount()` to render the component
+4. Write assertions to verify functionality and accessibility
+
+Example:
+```typescript
+import React from 'react'
+import MyComponent from './MyComponent'
+
+describe('MyComponent', () => {
+  it('should render correctly', () => {
+    cy.mount(<MyComponent />)
+    cy.get('[data-testid="my-element"]').should('be.visible')
+  })
+})
+```
+
+## SEO Features
+
+- Semantic HTML structure with proper ARIA labels
+- Open Graph and Twitter Card meta tags
+- Structured data (JSON-LD)
+- Sitemap and robots.txt
+- Optimized meta descriptions and keywords
 
 ## License
-MIT
 
----
-Made by [Simone Rescio](https://simonerescio.it)
+This project is open source and available under the [MIT License](LICENSE).
