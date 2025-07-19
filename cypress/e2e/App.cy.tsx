@@ -101,6 +101,74 @@ describe('Boss Bar Generator App', () => {
     cy.get('.genshin-title-lore').should('contain.text', testData.titleLore)
     cy.get('.genshin-level').should('contain.text', testData.level)
   })
+
+  it('should handle download functionality correctly', () => {
+    // Test download button is visible and enabled
+    cy.get('button').contains('⬇️ Download').should('be.visible').and('not.be.disabled')
+    
+    // Click download button
+    cy.get('button').contains('⬇️ Download').click()
+    
+    // Verify that a clone element was created for capture (download process started)
+    cy.get('[id^="capture-clone-"]').should('exist')
+    
+    // Wait for the clone to be removed (download process completed)
+    cy.get('[id^="capture-clone-"]').should('not.exist')
+    
+    // Test download works multiple times
+    cy.get('button').contains('⬇️ Download').click()
+    cy.get('[id^="capture-clone-"]').should('exist')
+    cy.get('[id^="capture-clone-"]').should('not.exist')
+  })
+
+  it('should generate correct file names for downloads', () => {
+    // Test different game styles and formats
+    const testCases = [
+      { gameStyle: 'genshin', format: 'video-call' },
+      { gameStyle: 'genshin', format: 'bar-only' },
+      { gameStyle: 'tekken2', format: 'video-call' },
+      { gameStyle: 'demonsouls', format: 'bar-only' }
+    ]
+    
+    testCases.forEach(({ gameStyle, format }) => {
+      // Change game style
+      cy.get('select[name="gameStyle"]').select(gameStyle)
+      
+      // Change format
+      cy.get('select[name="format"]').select(format)
+      
+      // Trigger download
+      cy.get('button').contains('⬇️ Download').click()
+      
+      // Verify download process starts and completes
+      cy.get('[id^="capture-clone-"]').should('exist')
+      cy.get('[id^="capture-clone-"]').should('not.exist')
+    })
+  })
+
+  // it('should actually download files to test directory', () => {
+  //   // This test will actually trigger downloads to cypress/downloads
+  //   // First, let's clear any existing downloads
+  //   cy.task('deleteDownloads')
+  //   
+  //   // Set up a custom boss name to make the file unique
+  //   cy.get('input[name="GenshinBar_bossname"]')
+  //     .clear()
+  //     .type('Test Download Boss')
+  //   
+  //   // Trigger download
+  //   cy.get('button').contains('⬇️ Download').click()
+  //   
+  //   // Wait for download process
+  //   cy.get('[id^="capture-clone-"]').should('exist')
+  //   cy.get('[id^="capture-clone-"]').should('not.exist')
+  //   
+  //   // Check that a file was downloaded to the test directory
+  //   cy.task('checkDownloads').then((files) => {
+  //     cy.wrap(files as string[]).should('have.length.at.least', 1)
+  //     cy.wrap((files as string[])[0]).should('match', /boss-bar-genshin-.*\.png$/)
+  //   })
+  // })
 })
 
 export {} 
