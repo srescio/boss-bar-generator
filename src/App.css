@@ -138,6 +138,15 @@ h1 {
   .silhouette-image {
     width: 60vw;
   }
+  
+  /* Mobile background positioning - align horizontally to the right */
+  body {
+    background-position: right center;
+  }
+  
+  .app-background {
+    background-position: right center;
+  }
 }
 
 /* Footer styles */
