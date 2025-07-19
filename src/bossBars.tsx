@@ -1,6 +1,7 @@
 import GenshinBar from './bars/GenshinBar';
 import DemonsSoulsBar from './bars/DemonsSoulsBar';
 import Tekken2Bar from './bars/Tekken2Bar';
+import HonkaiImpactBar from './bars/HonkaiImpactBar';
 import React from 'react';
 
 export interface BossBarFieldRaw {
@@ -55,6 +56,15 @@ const bossBarsRaw: Record<string, BossBarConfigRaw> = {
       { label: 'Player 1 Color', default: 'red' },
       { label: 'Player 2', default: 'Player 2' },
       { label: 'Player 2 Color', default: 'red' },
+    ],
+    fontFamily: 'sans-serif',
+  },
+  honkaiimpact: {
+    label: 'Honkai Impact 3rd',
+    component: HonkaiImpactBar,
+    fields: [
+      { label: 'Boss Name', default: 'Husk - Mysticism' },
+      { label: 'Multiplier', default: 'x8' },
     ],
     fontFamily: 'sans-serif',
   },

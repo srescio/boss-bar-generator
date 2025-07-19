@@ -1,0 +1,114 @@
+.honkai-impact-bar {
+  position: relative;
+  width: 60%;
+  height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transform-origin: center;
+}
+
+/* Top slim bar */
+.honkai-top-bar {
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(90deg, #4ade80, #22c55e);
+  border-radius: 4px;
+  margin-bottom: 4px;
+  /* Tilted edges effect - parallelogram shape with fixed angles */
+  clip-path: polygon(2px 0, calc(100% - 0px) 0px, calc(100% - 2px) 100%, 0px 100%);
+  box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+}
+
+/* Bottom segmented bar container */
+.honkai-bottom-bar {
+  width: 100%;
+  height: 16px;
+  display: flex;
+  gap: 2px;
+  position: relative;
+}
+
+/* Individual segments */
+.honkai-segment {
+  flex: 1;
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, #059669);
+  border-radius: 3px;
+  /* Tilted edges effect - parallelogram shape with fixed angles */
+  clip-path: polygon(2px 0, calc(100% - 0px) 0px, calc(100% - 2px) 100%, 0px 100%);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+  position: relative;
+}
+
+/* Add subtle inner glow to segments */
+.honkai-segment::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  border-radius: 3px;
+  clip-path: polygon(8px 0px, calc(100% - 8px) 0px, calc(100% - 4px) 100%, 4px 100%);
+}
+
+/* Boss name on bottom right */
+.honkai-boss-name {
+  position: absolute;
+  bottom: -25px;
+  right: 0;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* Multiplier on right of segmented bar */
+.honkai-multiplier {
+  position: absolute;
+  top: 50%;
+  right: -40px;
+  transform: translateY(-50%);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+  letter-spacing: 1px;
+}
+
+/* Hover effects for interactivity */
+.honkai-top-bar:hover,
+.honkai-segment:hover {
+  filter: brightness(1.2);
+  transition: filter 0.2s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .honkai-impact-bar {
+    height: 60px;
+  }
+  
+  .honkai-top-bar {
+    height: 6px;
+  }
+  
+  .honkai-bottom-bar {
+    height: 12px;
+  }
+  
+  .honkai-boss-name {
+    font-size: 12px;
+    bottom: -20px;
+  }
+  
+  .honkai-multiplier {
+    font-size: 14px;
+    right: -35px;
+  }
+} 
