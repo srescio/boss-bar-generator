@@ -35,14 +35,14 @@ const DemonsSoulsBar: React.FC<DemonsSoulsBarProps> = (props) => {
       <div className="demons-souls-bar-container">
         <img 
           src={process.env.PUBLIC_URL + '/bars/demonssouls/bbg-l.png'} 
-          alt="bar left" 
+          alt="Demon's Souls boss bar left edge" 
           className="demons-souls-bar-side"
           style={{ height: barHeight }} 
         />
         <div className="demons-souls-bar-center" style={{ height: barHeight }}>
           <img
             src={process.env.PUBLIC_URL + '/bars/demonssouls/bbg-c.png'}
-            alt="bar center"
+            alt="Demon's Souls boss bar center section"
             className="demons-souls-bar-center-img"
             style={{
               width: `calc(100% + ${overlap * 2}px)`,
@@ -54,7 +54,7 @@ const DemonsSoulsBar: React.FC<DemonsSoulsBarProps> = (props) => {
         </div>
         <img 
           src={process.env.PUBLIC_URL + '/bars/demonssouls/bbg-r.png'} 
-          alt="bar right" 
+          alt="Demon's Souls boss bar right edge" 
           className="demons-souls-bar-side"
           style={{ height: barHeight }} 
         />

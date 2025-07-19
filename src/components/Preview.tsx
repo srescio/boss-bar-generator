@@ -10,8 +10,8 @@ interface PreviewProps {
 
 const Preview: React.FC<PreviewProps> = ({ state, canvasRef }) => {
   return (
-    <div className='preview-container-wrapper'>
-      <h2>Live Preview</h2>
+    <section className='preview-container-wrapper' aria-labelledby="preview-title">
+      <h2 id="preview-title">Live Preview</h2>
       <div 
         className={`preview-container ${state.format === 'video-call' ? 'video-call' : ''}`}
         ref={canvasRef}
@@ -19,6 +19,8 @@ const Preview: React.FC<PreviewProps> = ({ state, canvasRef }) => {
           ...getBackgroundStyle(state),
           ...getBarStyle(state.gameStyle),
         }}
+        role="img"
+        aria-label={`Boss bar preview in ${state.gameStyle} style`}
       >
         {(() => {
           const config = bossBars[state.gameStyle];
@@ -35,15 +37,16 @@ const Preview: React.FC<PreviewProps> = ({ state, canvasRef }) => {
           });
           return <BarComponent {...barProps} />;
         })()}
-        <figure className="silhouette-figure">
+        <figure className="silhouette-figure" role="img" aria-label="Character silhouette">
           <img 
             src={`${process.env.PUBLIC_URL}/assets/silhouette.png`}
-            alt="Silhouette"
+            alt="Character silhouette for boss bar preview"
             className="silhouette-image"
+            loading="lazy"
           />
         </figure>
       </div>
-    </div>
+    </section>
   );
 };
 

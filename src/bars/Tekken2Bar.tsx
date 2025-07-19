@@ -76,24 +76,24 @@ const Tekken2Bar: React.FC<Tekken2BarProps> = (props) => {
         <div className="tekken2-bar-container" style={{ height: barHeight }}>
           <img 
             src="/bars/tekken2/bbg-l.png" 
-            alt="Left bar" 
+            alt="Tekken 2 boss bar left edge" 
             className="tekken2-bar-side"
           />
           <img 
             src="/bars/tekken2/bbg-c.png" 
-            alt="Center bar" 
+            alt="Tekken 2 boss bar center section" 
             className="tekken2-bar-center"
           />
           <img 
             src="/bars/tekken2/bbg-r.png" 
-            alt="Right bar" 
+            alt="Tekken 2 boss bar right edge" 
             className="tekken2-bar-side"
           />
         </div>
         {/* Infinity symbol */}
         <img 
           src="/bars/tekken2/infinity.png" 
-          alt="Infinity" 
+          alt="Tekken 2 infinity symbol" 
           className="tekken2-infinity"
           style={{ 
             height: barHeight * 1.5, 
@@ -104,17 +104,17 @@ const Tekken2Bar: React.FC<Tekken2BarProps> = (props) => {
         <div className="tekken2-bar-container" style={{ height: barHeight }}>
           <img 
             src="/bars/tekken2/bbg-l.png" 
-            alt="Left bar" 
+            alt="Tekken 2 boss bar left edge" 
             className="tekken2-bar-side"
           />
           <img 
             src="/bars/tekken2/bbg-c.png" 
-            alt="Center bar" 
+            alt="Tekken 2 boss bar center section" 
             className="tekken2-bar-center"
           />
           <img 
             src="/bars/tekken2/bbg-r.png" 
-            alt="Right bar" 
+            alt="Tekken 2 boss bar right edge" 
             className="tekken2-bar-side"
           />
         </div>

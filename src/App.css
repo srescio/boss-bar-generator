@@ -1,9 +1,27 @@
+/* Screen reader only class for accessibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Preview section width */
+section[aria-labelledby="preview-section-title"] {
+  width: 100%;
+}
+
 .form-container {
   min-width: 300px;
   max-width: 340px;
   display: inline-flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 6px;
 }
 
 .form-container input,

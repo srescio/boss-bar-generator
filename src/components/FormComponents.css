@@ -7,17 +7,36 @@
   gap: 8px;
 }
 
-.tekken-field-group {
+/* Add these styles for the new semantic form structure */
+
+fieldset {
+  border: none;
+  margin: 0 0 15px 0;
+  padding: 0;
+}
+
+legend {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: white;
+  font-size: 14px;
+}
+
+.tekken-input-group {
   display: flex;
-  gap: 8px;
-  align-items: center;
-  width: 100%;
+  gap: 10px;
+  align-items: flex-end;
 }
 
-.tekken-player-label {
-  flex: 2;
+.tekken-field-group {
+  margin-bottom: 15px;
 }
 
+.tekken-player-label,
 .tekken-color-label {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12px;
+  color: #666;
 } 

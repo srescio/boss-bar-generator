@@ -12,19 +12,24 @@ interface FormComponentsProps {
 }
 
 const GameStyleSelect: React.FC<{ value: string; onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void }> = ({ value, onChange }) => (
-  <label>
-    Game Style:<br />
-    <select name="gameStyle" value={value} onChange={onChange}>
+  <fieldset>
+    <legend>Game Style</legend>
+    <select 
+      name="gameStyle" 
+      value={value} 
+      onChange={onChange}
+      aria-label="Select game style for boss bar"
+    >
       {GAME_STYLES.map((g) => (
         <option key={g.value} value={g.value}>{g.name}</option>
       ))}
     </select>
-  </label>
+  </fieldset>
 );
 
 const ScaleSlider: React.FC<{ scale: number; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }> = ({ scale, onChange }) => (
-  <label>
-    Scale: {scale}
+  <fieldset>
+    <legend>Scale: {scale}</legend>
     <input
       type="range"
       min={1}
@@ -33,51 +38,80 @@ const ScaleSlider: React.FC<{ scale: number; onChange: (e: React.ChangeEvent<HTM
       value={scale}
       onChange={onChange}
       className="scale-slider"
+      aria-label={`Scale slider, current value: ${scale}`}
+      aria-valuemin={1}
+      aria-valuemax={10}
+      aria-valuenow={scale}
     />
-  </label>
+  </fieldset>
 );
 
 const BackgroundSelect: React.FC<{ value: string; onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void }> = ({ value, onChange }) => (
-  <label>
-    Background:<br />
-    <select name="background" value={value} onChange={onChange}>
+  <fieldset>
+    <legend>Background</legend>
+    <select 
+      name="background" 
+      value={value} 
+      onChange={onChange}
+      aria-label="Select background type"
+    >
       {BACKGROUNDS.map((b) => (
         <option key={b.value} value={b.value}>{b.name}</option>
       ))}
     </select>
-  </label>
+  </fieldset>
 );
 
 const BackgroundSizeSelect: React.FC<{ value: string; onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void; show: boolean }> = ({ value, onChange, show }) => {
   if (!show) return null;
   
   return (
-    <label>
-      Background Size:<br />
-      <select name="backgroundSize" value={value} onChange={onChange}>
+    <fieldset>
+      <legend>Background Size</legend>
+      <select 
+        name="backgroundSize" 
+        value={value} 
+        onChange={onChange}
+        aria-label="Select background size"
+      >
         {BACKGROUND_SIZE_OPTIONS.map((option) => (
           <option key={option.value} value={option.value}>{option.label}</option>
         ))}
       </select>
-    </label>
+    </fieldset>
   );
 };
 
 const FormatSelect: React.FC<{ value: string; onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void }> = ({ value, onChange }) => (
-  <label>
-    Format:<br />
-    <select name="format" value={value} onChange={onChange}>
+  <fieldset>
+    <legend>Format</legend>
+    <select 
+      name="format" 
+      value={value} 
+      onChange={onChange}
+      aria-label="Select output format"
+    >
       {FORMAT_OPTIONS.map((option) => (
         <option key={option.value} value={option.value}>{option.label}</option>
       ))}
     </select>
-  </label>
+  </fieldset>
 );
 
 const ActionButtons: React.FC<{ onDownload: () => void; onClear: () => void }> = ({ onDownload, onClear }) => (
-  <div className="action-buttons">
-    <button onClick={onDownload}>⬇️ Download</button>
-    <button onClick={onClear}>🔄 Reset</button>
+  <div className="action-buttons" role="group" aria-label="Boss bar actions">
+    <button 
+      onClick={onDownload}
+      aria-label="Download boss bar image"
+    >
+      ⬇️ Download
+    </button>
+    <button 
+      onClick={onClear}
+      aria-label="Reset all settings to default"
+    >
+      🔄 Reset
+    </button>
   </div>
 );
 
@@ -89,7 +123,7 @@ const FormComponents: React.FC<FormComponentsProps> = ({
   onClear 
 }) => {
   return (
-    <div className="form-container">
+    <form className="form-container" role="form" aria-label="Boss bar configuration form">
       <GameStyleSelect value={state.gameStyle} onChange={onFieldChange} />
       
       {bossBars[state.gameStyle]?.fields.map((field, idx, arr) => {
@@ -97,31 +131,36 @@ const FormComponents: React.FC<FormComponentsProps> = ({
         if (state.gameStyle === 'tekken2' && field.label.includes('Player') && !field.label.includes('Color')) {
           const colorField = arr[idx + 1];
           return (
-            <div key={field.key} className="tekken-field-group">
-              <label className="tekken-player-label">
-                {field.label}:<br />
-                <input
-                  name={field.key}
-                  value={state[field.key] !== undefined ? state[field.key] : field.default ?? ''}
-                  onChange={onFieldChange}
-                  maxLength={100}
-                />
-              </label>
-              {colorField && colorField.label.includes('Color') && (
-                <label className="tekken-color-label">
-                  Color:<br />
-                  <select
-                    name={colorField.key}
-                    value={state[colorField.key] !== undefined ? state[colorField.key] : colorField.default ?? 'red'}
+            <fieldset key={field.key} className="tekken-field-group">
+              <legend>{field.label}</legend>
+              <div className="tekken-input-group">
+                <label className="tekken-player-label">
+                  Player Name:
+                  <input
+                    name={field.key}
+                    value={state[field.key] !== undefined ? state[field.key] : field.default ?? ''}
                     onChange={onFieldChange}
-                  >
-                    {TEKKEN_COLORS.map((color) => (
-                      <option key={color.value} value={color.value}>{color.label}</option>
-                    ))}
-                  </select>
+                    maxLength={100}
+                    aria-label={`${field.label} player name`}
+                  />
                 </label>
-              )}
-            </div>
+                {colorField && colorField.label.includes('Color') && (
+                  <label className="tekken-color-label">
+                    Color:
+                    <select
+                      name={colorField.key}
+                      value={state[colorField.key] !== undefined ? state[colorField.key] : colorField.default ?? 'red'}
+                      onChange={onFieldChange}
+                      aria-label={`${field.label} color selection`}
+                    >
+                      {TEKKEN_COLORS.map((color) => (
+                        <option key={color.value} value={color.value}>{color.label}</option>
+                      ))}
+                    </select>
+                  </label>
+                )}
+              </div>
+            </fieldset>
           );
         }
         // Hide color fields for Tekken2 (handled above)
@@ -130,15 +169,16 @@ const FormComponents: React.FC<FormComponentsProps> = ({
         }
         // Default rendering for other fields
         return (
-          <label key={field.key}>
-            {field.label}:<br />
+          <fieldset key={field.key}>
+            <legend>{field.label}</legend>
             <input
               name={field.key}
               value={state[field.key] !== undefined ? state[field.key] : field.default ?? ''}
               onChange={onFieldChange}
               maxLength={100}
+              aria-label={field.label}
             />
-          </label>
+          </fieldset>
         );
       })}
       
@@ -151,7 +191,7 @@ const FormComponents: React.FC<FormComponentsProps> = ({
       />
       <FormatSelect value={state.format} onChange={onFieldChange} />
       <ActionButtons onDownload={onDownload} onClear={onClear} />
-    </div>
+    </form>
   );
 };
 

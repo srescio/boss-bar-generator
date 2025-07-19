@@ -155,20 +155,33 @@ function App() {
     >
       <LoadingOverlay isLoading={isLoading} />
       
-      <h1>Boss Bar Generator</h1>
-      <div className='main-container'>
-        <FormComponents
-          state={state}
-          onFieldChange={handleChange}
-          onBackgroundChange={handleBackgroundChange}
-          onDownload={handleDownload}
-          onClear={handleClear}
-        />
-        <Preview state={state} canvasRef={canvasRef} />
-      </div>
-      <p className="footer-text">
-        Made by <a href="https://simonerescio.it" className="footer-link">Simone Rescio</a>
-      </p>
+      <header role="banner">
+        <h1>Boss Bar Generator</h1>
+      </header>
+      
+      <main role="main" className='main-container'>
+        <section aria-labelledby="form-section-title">
+          <h2 id="form-section-title" className="sr-only">Boss Bar Configuration</h2>
+          <FormComponents
+            state={state}
+            onFieldChange={handleChange}
+            onBackgroundChange={handleBackgroundChange}
+            onDownload={handleDownload}
+            onClear={handleClear}
+          />
+        </section>
+        
+        <section aria-labelledby="preview-section-title">
+          <h2 id="preview-section-title" className="sr-only">Live Preview</h2>
+          <Preview state={state} canvasRef={canvasRef} />
+        </section>
+      </main>
+      
+      <footer role="contentinfo">
+        <p className="footer-text">
+          Made by <a href="https://simonerescio.it" className="footer-link" rel="author">Simone Rescio</a>
+        </p>
+      </footer>
     </div>
   );
 }

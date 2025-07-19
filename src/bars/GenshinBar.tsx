@@ -61,14 +61,14 @@ const GenshinBar: React.FC<GenshinBarProps> = (props) => {
         <div className="genshin-bar-container">
           <img 
             src={process.env.PUBLIC_URL + '/bars/genshin/bbg-l.png'} 
-            alt="bar left" 
+            alt="Genshin Impact boss bar left edge" 
             className="genshin-bar-side"
             style={{ height: barHeight }} 
           />
           <div className="genshin-bar-center" style={{ height: barHeight }}>
             <img
               src={process.env.PUBLIC_URL + '/bars/genshin/bbg-c.png'}
-              alt="bar center"
+              alt="Genshin Impact boss bar center section"
               className="genshin-bar-center-img"
               style={{
                 width: `calc(100% + ${overlap * 2}px)`,
@@ -80,7 +80,7 @@ const GenshinBar: React.FC<GenshinBarProps> = (props) => {
           </div>
           <img 
             src={process.env.PUBLIC_URL + '/bars/genshin/bbg-r.png'} 
-            alt="bar right" 
+            alt="Genshin Impact boss bar right edge" 
             className="genshin-bar-side"
             style={{ height: barHeight }} 
           />
