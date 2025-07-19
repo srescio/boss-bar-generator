@@ -7,12 +7,13 @@
   justify-content: center;
   align-items: center;
   transform-origin: center;
+  overflow: visible;
 }
 
 /* Top slim bar */
 .honkai-top-bar {
   width: 100%;
-  height: 8px;
+  height: var(--top-bar-height, 8px);
   background: linear-gradient(90deg, #4ade80, #22c55e);
   border-radius: 4px;
   margin-bottom: 4px;
@@ -24,7 +25,7 @@
 /* Bottom segmented bar container */
 .honkai-bottom-bar {
   width: 100%;
-  height: 16px;
+  height: var(--bottom-bar-height, 16px);
   display: flex;
   gap: 2px;
   position: relative;
@@ -52,33 +53,37 @@
   bottom: 0;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   border-radius: 3px;
-  clip-path: polygon(8px 0px, calc(100% - 8px) 0px, calc(100% - 4px) 100%, 4px 100%);
+  clip-path: polygon(2px 0, calc(100% - 0px) 0px, calc(100% - 2px) 100%, 0px 100%);
 }
 
-/* Boss name on bottom right */
-.honkai-boss-name {
-  position: absolute;
-  bottom: -25px;
-  right: 0;
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 600;
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-}
-
-/* Multiplier on right of segmented bar */
+/* Multiplier on right of bottom bar */
 .honkai-multiplier {
   position: absolute;
   top: 50%;
-  right: -40px;
+  right: var(--multiplier-right-offset, -30px);
   transform: translateY(-50%);
   color: #ffffff;
-  font-size: 16px;
+  font-size: var(--multiplier-font-size, 18px);
   font-weight: bold;
+  font-style: italic;
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
   letter-spacing: 1px;
+  z-index: 10;
+}
+
+/* Boss name on separate row below bottom bar */
+.honkai-boss-name {
+  width: 100%;
+  text-align: right;
+  margin-top: 8px;
+  color: #ffffff;
+  font-size: var(--boss-font-size, 16px);
+  font-weight: 600;
+  font-style: italic;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  z-index: 10;
 }
 
 /* Hover effects for interactivity */
