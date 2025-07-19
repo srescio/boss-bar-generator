@@ -1,4 +1,5 @@
 import React from 'react';
+import './Tekken2Bar.css';
 
 // Add color type
 export type TekkenColor = 'red' | 'darkred' | 'brightred' | 'blue';
@@ -18,7 +19,7 @@ const CHAR_MAP: Record<string, string> = {
 function renderTekkenSpriteText(text: string, color: TekkenColor = 'red') {
   const baseSize = 32; // px, original sprite cell size
   return (
-    <span className={`tekken-sprite-text`} style={{ flexWrap: 'wrap', lineHeight: 1 }}>
+    <span className="tekken-sprite-text">
       {text.split('').map((char, i) => {
         const upper = char.toUpperCase();
         const charKey = CHAR_MAP[upper];
@@ -27,15 +28,15 @@ function renderTekkenSpriteText(text: string, color: TekkenColor = 'red') {
           <span
             key={i}
             className={className}
-            style={{
-              fontSize: 0,
-              display: 'inline-block',
-              transform: 'scale(0.5)',
-              transformOrigin: 'center',
-            }}
           />
         ) : (
-          <span key={i} style={{ color: '#fff', fontWeight: 700, fontSize: `${baseSize * 0.4}px` }}>{char}</span>
+          <span 
+            key={i} 
+            className="tekken-fallback-text"
+            style={{ fontSize: `${baseSize * 0.4}px` }}
+          >
+            {char}
+          </span>
         );
       })}
     </span>
@@ -69,96 +70,77 @@ const Tekken2Bar: React.FC<Tekken2BarProps> = (props) => {
       id="tekken2-bar"
       className="boss-bar"
       style={{
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
         gap: 8 * scaleFactor,
         marginTop: 24 * scaleFactor,
-        fontFamily: 'sans-serif',
       }}
     >
       {/* Bars row */}
-      <div style={{ width: '100%', display: 'flex', flexDirection: 'row', gap: 16 * scaleFactor, alignItems: 'center' }}>
+      <div 
+        className="tekken2-bars-row"
+        style={{ gap: 16 * scaleFactor }}
+      >
         {/* Player 1 Bar */}
-        <div style={{ flex: 1, display: 'flex', height: barHeight }}>
+        <div className="tekken2-bar-container" style={{ height: barHeight }}>
           <img 
             src="/bars/tekken2/bbg-l.png" 
             alt="Left bar" 
-            style={{ 
-              height: '100%', 
-              width: 'auto',
-              objectFit: 'contain'
-            }} 
+            className="tekken2-bar-side"
           />
           <img 
             src="/bars/tekken2/bbg-c.png" 
             alt="Center bar" 
-            style={{ 
-              height: '100%', 
-              flex: 1,
-              objectFit: 'fill'
-            }} 
+            className="tekken2-bar-center"
           />
           <img 
             src="/bars/tekken2/bbg-r.png" 
             alt="Right bar" 
-            style={{ 
-              height: '100%', 
-              width: 'auto',
-              objectFit: 'contain'
-            }} 
+            className="tekken2-bar-side"
           />
         </div>
         {/* Infinity symbol */}
         <img 
           src="/bars/tekken2/infinity.png" 
           alt="Infinity" 
+          className="tekken2-infinity"
           style={{ 
             height: barHeight * 1.5, 
-            width: 'auto',
             margin: `0 ${0.5 * scaleFactor}px`,
-            display: 'block',
           }} 
         />
         {/* Player 2 Bar */}
-        <div style={{ flex: 1, display: 'flex', height: barHeight }}>
+        <div className="tekken2-bar-container" style={{ height: barHeight }}>
           <img 
             src="/bars/tekken2/bbg-l.png" 
             alt="Left bar" 
-            style={{ 
-              height: '100%', 
-              width: 'auto',
-              objectFit: 'contain'
-            }} 
+            className="tekken2-bar-side"
           />
           <img 
             src="/bars/tekken2/bbg-c.png" 
             alt="Center bar" 
-            style={{ 
-              height: '100%', 
-              flex: 1,
-              objectFit: 'fill'
-            }} 
+            className="tekken2-bar-center"
           />
           <img 
             src="/bars/tekken2/bbg-r.png" 
             alt="Right bar" 
-            style={{ 
-              height: '100%', 
-              width: 'auto',
-              objectFit: 'contain'
-            }} 
+            className="tekken2-bar-side"
           />
         </div>
       </div>
       {/* Names row below bars */}
-      <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: -10 * (scaleFactor * 2) }}>
-        <div style={{ maxWidth: '48%', wordBreak: 'break-word', whiteSpace: 'pre-wrap', textAlign: 'left', display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', transform: `scale(${scaleFactor})`, transformOrigin: 'left bottom' }}>
+      <div 
+        className="tekken2-names-row"
+        style={{ marginTop: -10 * (scaleFactor * 2) }}
+      >
+        <div 
+          className="tekken2-player-name tekken2-player-name-left"
+          style={{ transform: `scale(${scaleFactor})` }}
+        >
           {renderTekkenSpriteText(p1, p1Color)}
         </div>
-        <div style={{ maxWidth: '48%', wordBreak: 'break-word', whiteSpace: 'pre-wrap', textAlign: 'right', display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'flex-end', transform: `scale(${scaleFactor})`, transformOrigin: 'right bottom' }}>
+        <div 
+          className="tekken2-player-name tekken2-player-name-right"
+          style={{ transform: `scale(${scaleFactor})` }}
+        >
           {renderTekkenSpriteText(p2, p2Color)}
         </div>
       </div>
