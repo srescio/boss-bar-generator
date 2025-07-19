@@ -1,0 +1,50 @@
+import React from 'react';
+import { bossBars } from '../bossBars';
+import { BossBarState } from '../types/constants';
+import { getBarStyle, getBackgroundStyle } from '../utils/backgroundUtils';
+
+interface PreviewProps {
+  state: BossBarState;
+  canvasRef: React.RefObject<HTMLDivElement | null>;
+}
+
+const Preview: React.FC<PreviewProps> = ({ state, canvasRef }) => {
+  return (
+    <div className='preview-container-wrapper'>
+      <h2>Live Preview</h2>
+      <div 
+        className={`preview-container ${state.format === 'video-call' ? 'video-call' : ''}`}
+        ref={canvasRef}
+        style={{
+          ...getBackgroundStyle(state),
+          ...getBarStyle(state.gameStyle),
+        }}
+      >
+        {(() => {
+          const config = bossBars[state.gameStyle];
+          if (!config) return null;
+          const BarComponent = config.component;
+          // Pass only the fields this bar expects
+          const barProps: any = { scale: state.scale };
+          config.fields.forEach(f => {
+            let val = state[f.key];
+            if (val === undefined) {
+              val = f.default ?? '';
+            }
+            barProps[f.key] = val;
+          });
+          return <BarComponent {...barProps} />;
+        })()}
+        <figure className="silhouette-figure">
+          <img 
+            src={`${process.env.PUBLIC_URL}/assets/silhouette.png`}
+            alt="Silhouette"
+            className="silhouette-image"
+          />
+        </figure>
+      </div>
+    </div>
+  );
+};
+
+export default Preview; 
