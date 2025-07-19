@@ -48,12 +48,12 @@ const ScaleSlider: React.FC<{ scale: number; onChange: (e: React.ChangeEvent<HTM
 
 const BackgroundSelect: React.FC<{ value: string; onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void }> = ({ value, onChange }) => (
   <fieldset>
-    <legend>Background</legend>
+    <legend>Background Image</legend>
     <select 
       name="background" 
       value={value} 
       onChange={onChange}
-      aria-label="Select background type"
+      aria-label="Select background image"
     >
       {BACKGROUNDS.map((b) => (
         <option key={b.value} value={b.value}>{b.name}</option>
