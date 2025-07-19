@@ -6,6 +6,11 @@ describe('Boss Bar Generator App', () => {
     cy.visit('/')
   })
 
+  before(() => {
+    // Clean up any existing downloaded test files before starting tests
+    cy.task('deleteDownloads')
+  })
+
   it('should display Genshin Impact as default game style', () => {
     // Check that Genshin Impact is selected in the dropdown
     cy.get('select[name="gameStyle"]').should('have.value', 'genshin')
@@ -144,31 +149,39 @@ describe('Boss Bar Generator App', () => {
       cy.get('[id^="capture-clone-"]').should('exist')
       cy.get('[id^="capture-clone-"]').should('not.exist')
     })
+    
+    // Wait for all 4 files to be downloaded with correct naming patterns
+    const waitForFiles = () => {
+      cy.task('checkDownloads').then((files) => {
+        const fileArray = files as string[]
+        if (fileArray.length === 4) {
+          // Check each file follows the expected pattern
+          fileArray.forEach((fileName) => {
+            cy.wrap(fileName).should('match', /boss-bar-(genshin|tekken2|demonsouls)-(video-call|bar-only)-.*\.png$/)
+          })
+        } else {
+          cy.wait(1000)
+          waitForFiles()
+        }
+      })
+    }
+    
+    waitForFiles()
   })
 
-  // it('should actually download files to test directory', () => {
-  //   // This test will actually trigger downloads to cypress/downloads
-  //   // First, let's clear any existing downloads
-  //   cy.task('deleteDownloads')
-  //   
-  //   // Set up a custom boss name to make the file unique
-  //   cy.get('input[name="GenshinBar_bossname"]')
-  //     .clear()
-  //     .type('Test Download Boss')
-  //   
-  //   // Trigger download
-  //   cy.get('button').contains('⬇️ Download').click()
-  //   
-  //   // Wait for download process
-  //   cy.get('[id^="capture-clone-"]').should('exist')
-  //   cy.get('[id^="capture-clone-"]').should('not.exist')
-  //   
-  //   // Check that a file was downloaded to the test directory
-  //   cy.task('checkDownloads').then((files) => {
-  //     cy.wrap(files as string[]).should('have.length.at.least', 1)
-  //     cy.wrap((files as string[])[0]).should('match', /boss-bar-genshin-.*\.png$/)
-  //   })
-  // })
+  it('should verify downloaded file names and patterns', () => {
+    // Check that files were actually downloaded
+    cy.task('checkDownloads').then((files) => {
+      cy.wrap(files as string[]).should('have.length.at.least', 1)
+      
+      // Check that at least one file follows the expected pattern
+      const fileNames = files as string[]
+      const hasValidFile = fileNames.some(fileName => 
+        /boss-bar-(genshin|tekken2|demonsouls)-(video-call|bar-only)-.*\.png$/.test(fileName)
+      )
+      cy.wrap(hasValidFile).should('be.true')
+    })
+  })
 })
 
 export {} 
