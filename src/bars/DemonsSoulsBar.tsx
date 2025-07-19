@@ -1,4 +1,5 @@
 import React from 'react';
+import './DemonsSoulsBar.css';
 
 export interface DemonsSoulsBarProps {
   scale: number;
@@ -19,39 +20,43 @@ const DemonsSoulsBar: React.FC<DemonsSoulsBarProps> = (props) => {
       id="demons-souls-bar"
       className="boss-bar"
       style={{
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
         marginTop: 24 * scaleFactor,
-        fontFamily: 'serif',
       }}
     >
-      <div style={{
-        fontSize: 40 * scaleFactor,
-        fontWeight: 700,
-        color: '#e9e7e1',
-        textShadow: '2px 2px 8px #000',
-        marginBottom: 16 * scaleFactor,
-      }}>{bossName}</div>
-      <div style={{ display: 'flex', alignItems: 'center', width: '80%' }}>
-        <img src={process.env.PUBLIC_URL + '/bars/demonssouls/bbg-l.png'} alt="bar left" style={{ height: barHeight }} />
-        <div style={{ flex: 1, height: barHeight, background: 'none', display: 'flex' }}>
+      <div 
+        className="demons-souls-boss-name"
+        style={{
+          fontSize: 40 * scaleFactor,
+          marginBottom: 16 * scaleFactor,
+        }}
+      >
+        {bossName}
+      </div>
+      <div className="demons-souls-bar-container">
+        <img 
+          src={process.env.PUBLIC_URL + '/bars/demonssouls/bbg-l.png'} 
+          alt="bar left" 
+          className="demons-souls-bar-side"
+          style={{ height: barHeight }} 
+        />
+        <div className="demons-souls-bar-center" style={{ height: barHeight }}>
           <img
             src={process.env.PUBLIC_URL + '/bars/demonssouls/bbg-c.png'}
             alt="bar center"
             style={{
               width: `calc(100% + ${overlap * 2}px)`,
               height: barHeight,
-              objectFit: 'fill',
               marginLeft: -overlap,
               marginRight: -overlap,
-              display: 'block',
             }}
           />
         </div>
-        <img src={process.env.PUBLIC_URL + '/bars/demonssouls/bbg-r.png'} alt="bar right" style={{ height: barHeight }} />
+        <img 
+          src={process.env.PUBLIC_URL + '/bars/demonssouls/bbg-r.png'} 
+          alt="bar right" 
+          className="demons-souls-bar-side"
+          style={{ height: barHeight }} 
+        />
       </div>
     </div>
   );

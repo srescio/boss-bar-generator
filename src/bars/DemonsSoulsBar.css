@@ -1,0 +1,41 @@
+/* Main container */
+#demons-souls-bar {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: serif;
+}
+
+/* Boss name styling */
+.demons-souls-boss-name {
+  font-weight: 700;
+  color: #e9e7e1;
+  text-shadow: 2px 2px 8px #000;
+}
+
+/* Bar container */
+.demons-souls-bar-container {
+  display: flex;
+  align-items: center;
+  width: 80%;
+}
+
+/* Bar center container */
+.demons-souls-bar-center {
+  flex: 1;
+  background: none;
+  display: flex;
+}
+
+/* Bar center image */
+.demons-souls-bar-center img {
+  object-fit: fill;
+  display: block;
+}
+
+/* Bar side images */
+.demons-souls-bar-side {
+  /* Height will be set dynamically via inline styles */
+} 
