@@ -17,7 +17,6 @@ const CHAR_MAP: Record<string, string> = {
 };
 
 function renderTekkenSpriteText(text: string, color: TekkenColor = 'red') {
-  const baseSize = 32; // px, original sprite cell size
   return (
     <span className="tekken-sprite-text">
       {text.split('').map((char, i) => {
@@ -29,15 +28,9 @@ function renderTekkenSpriteText(text: string, color: TekkenColor = 'red') {
             key={i}
             className={className}
           />
-        ) : (
-          <span 
-            key={i} 
-            className="tekken-fallback-text"
-            style={{ fontSize: `${baseSize * 0.4}px` }}
-          >
-            {char}
-          </span>
-        );
+        ) : char === ' ' ? (
+          <span key={i} style={{ width: '16px', display: 'inline-block' }}></span>
+        ) : null; // Don't render unsupported characters, but keep spaces
       })}
     </span>
   );

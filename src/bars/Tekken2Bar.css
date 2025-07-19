@@ -84,8 +84,4 @@
   transform-origin: center;
 }
 
-/* Fallback text for unmapped characters */
-.tekken-fallback-text {
-  color: #fff;
-  font-weight: 700;
-} 
+ 
