@@ -480,7 +480,7 @@ function App() {
                   name={field.key}
                   value={state[field.key] !== undefined ? state[field.key] : field.default ?? ''}
                   onChange={handleChange}
-                  maxLength={32}
+                  maxLength={100}
                 />
               </label>
             );
