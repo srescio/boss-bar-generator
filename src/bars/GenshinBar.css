@@ -58,7 +58,7 @@
 }
 
 /* Bar center image */
-.genshin-bar-center img {
+.genshin-bar-center-img {
   object-fit: fill;
   display: block;
 }

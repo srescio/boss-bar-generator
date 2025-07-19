@@ -92,6 +92,16 @@
   }
 }
 
+/* SVG elements */
+.honkai-svg {
+  display: block;
+}
+
+.honkai-segment-wrapper {
+  flex: 1;
+  height: 100%;
+}
+
 /* Capture mode styles for SVG-based approach */
 .capture-mode .honkai-top-bar-container svg,
 .capture-mode .honkai-segments-container svg {

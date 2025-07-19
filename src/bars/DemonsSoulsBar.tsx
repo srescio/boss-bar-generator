@@ -18,7 +18,7 @@ const DemonsSoulsBar: React.FC<DemonsSoulsBarProps> = (props) => {
   return (
     <div 
       id="demons-souls-bar"
-      className="boss-bar"
+      className="boss-bar demons-souls-bar"
       style={{
         marginTop: 24 * scaleFactor,
       }}
@@ -26,8 +26,8 @@ const DemonsSoulsBar: React.FC<DemonsSoulsBarProps> = (props) => {
       <div 
         className="demons-souls-boss-name"
         style={{
-          fontSize: 40 * scaleFactor,
-          marginBottom: 16 * scaleFactor,
+        fontSize: 40 * scaleFactor,
+        marginBottom: 16 * scaleFactor,
         }}
       >
         {bossName}
@@ -43,6 +43,7 @@ const DemonsSoulsBar: React.FC<DemonsSoulsBarProps> = (props) => {
           <img
             src={process.env.PUBLIC_URL + '/bars/demonssouls/bbg-c.png'}
             alt="bar center"
+            className="demons-souls-bar-center-img"
             style={{
               width: `calc(100% + ${overlap * 2}px)`,
               height: barHeight,

@@ -1,0 +1,23 @@
+.scale-slider {
+  width: 100%;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.tekken-field-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+}
+
+.tekken-player-label {
+  flex: 2;
+}
+
+.tekken-color-label {
+  flex: 1;
+} 

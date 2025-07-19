@@ -85,4 +85,9 @@
   transform-origin: center;
 }
 
+.tekken-space {
+  width: 16px;
+  display: inline-block;
+}
+
  

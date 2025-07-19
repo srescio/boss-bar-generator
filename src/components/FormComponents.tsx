@@ -1,6 +1,7 @@
 import React from 'react';
 import { bossBars } from '../bossBars';
 import { BossBarState, GAME_STYLES, BACKGROUNDS, BACKGROUND_SIZE_OPTIONS, FORMAT_OPTIONS, TEKKEN_COLORS } from '../types/constants';
+import './FormComponents.css';
 
 interface FormComponentsProps {
   state: BossBarState;
@@ -31,7 +32,7 @@ const ScaleSlider: React.FC<{ scale: number; onChange: (e: React.ChangeEvent<HTM
       name="scale"
       value={scale}
       onChange={onChange}
-      style={{ width: '100%' }}
+      className="scale-slider"
     />
   </label>
 );
@@ -74,7 +75,7 @@ const FormatSelect: React.FC<{ value: string; onChange: (e: React.ChangeEvent<HT
 );
 
 const ActionButtons: React.FC<{ onDownload: () => void; onClear: () => void }> = ({ onDownload, onClear }) => (
-  <div style={{ display: 'flex', gap: 8 }}>
+  <div className="action-buttons">
     <button onClick={onDownload}>⬇️ Download</button>
     <button onClick={onClear}>🔄 Reset</button>
   </div>
@@ -96,8 +97,8 @@ const FormComponents: React.FC<FormComponentsProps> = ({
         if (state.gameStyle === 'tekken2' && field.label.includes('Player') && !field.label.includes('Color')) {
           const colorField = arr[idx + 1];
           return (
-            <div key={field.key} style={{ display: 'flex', gap: 8, alignItems: 'center', width: '100%' }}>
-              <label style={{ flex: 2 }}>
+            <div key={field.key} className="tekken-field-group">
+              <label className="tekken-player-label">
                 {field.label}:<br />
                 <input
                   name={field.key}
@@ -107,7 +108,7 @@ const FormComponents: React.FC<FormComponentsProps> = ({
                 />
               </label>
               {colorField && colorField.label.includes('Color') && (
-                <label style={{ flex: 1 }}>
+                <label className="tekken-color-label">
                   Color:<br />
                   <select
                     name={colorField.key}

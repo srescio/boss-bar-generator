@@ -139,3 +139,14 @@ h1 {
     width: 60vw;
   }
 }
+
+/* Footer styles */
+.footer-text {
+  margin-top: 32px;
+  color: #aaa;
+  font-size: 14px;
+}
+
+.footer-link {
+  color: #3b82f6;
+}

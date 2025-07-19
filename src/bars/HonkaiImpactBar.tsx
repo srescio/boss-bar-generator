@@ -54,7 +54,7 @@ const HonkaiImpactBar: React.FC<HonkaiImpactBarProps> = (props) => {
           height="100%" 
           viewBox="0 0 100 100" 
           preserveAspectRatio="none"
-          style={{ display: 'block' }}
+          className="honkai-svg"
         >
           <defs>
             <linearGradient id="honkai-top-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -78,13 +78,13 @@ const HonkaiImpactBar: React.FC<HonkaiImpactBarProps> = (props) => {
         {/* SVG segments for better canvas compatibility */}
         <div className="honkai-segments-container" style={{ flex: 1, height: bottomBarHeight, display: 'flex', gap: 2 }}>
           {[0, 1, 2].map((index) => (
-            <div key={index} style={{ flex: 1, height: '100%' }}>
+            <div key={index} className="honkai-segment-wrapper">
               <svg 
                 width="100%" 
                 height="100%" 
                 viewBox="0 0 100 100" 
                 preserveAspectRatio="none"
-                style={{ display: 'block' }}
+                className="honkai-svg"
               >
                 <defs>
                   <linearGradient id={`honkai-segment-gradient-${index}`} x1="0%" y1="0%" x2="100%" y2="0%">

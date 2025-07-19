@@ -25,7 +25,7 @@ const GenshinBar: React.FC<GenshinBarProps> = (props) => {
   return (
     <div 
       id="genshin-bar"
-      className="boss-bar"
+      className="boss-bar genshin-bar"
       style={{ marginTop: 24 * scaleFactor }}
     >
       <div 
@@ -69,6 +69,7 @@ const GenshinBar: React.FC<GenshinBarProps> = (props) => {
             <img
               src={process.env.PUBLIC_URL + '/bars/genshin/bbg-c.png'}
               alt="bar center"
+              className="genshin-bar-center-img"
               style={{
                 width: `calc(100% + ${overlap * 2}px)`,
                 height: barHeight,

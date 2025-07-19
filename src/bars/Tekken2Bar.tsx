@@ -29,7 +29,7 @@ function renderTekkenSpriteText(text: string, color: TekkenColor = 'red') {
             className={className}
           />
         ) : char === ' ' ? (
-          <span key={i} style={{ width: '16px', display: 'inline-block' }}></span>
+          <span key={i} className="tekken-space"></span>
         ) : null; // Don't render unsupported characters, but keep spaces
       })}
     </span>
@@ -61,7 +61,7 @@ const Tekken2Bar: React.FC<Tekken2BarProps> = (props) => {
   return (
     <div 
       id="tekken2-bar"
-      className="boss-bar"
+      className="boss-bar tekken2-bar"
       style={{
         gap: 8 * scaleFactor,
         marginTop: 24 * scaleFactor,

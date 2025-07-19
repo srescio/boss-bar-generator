@@ -166,8 +166,8 @@ function App() {
         />
         <Preview state={state} canvasRef={canvasRef} />
       </div>
-      <p style={{ marginTop: 32, color: '#aaa', fontSize: 14 }}>
-        Made by <a href="https://simonerescio.it" style={{ color: '#3b82f6' }}>Simone Rescio</a>
+      <p className="footer-text">
+        Made by <a href="https://simonerescio.it" className="footer-link">Simone Rescio</a>
       </p>
     </div>
   );
