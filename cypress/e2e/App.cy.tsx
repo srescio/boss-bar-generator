@@ -259,6 +259,41 @@ describe('Boss Bar Generator App', () => {
     // Verify download works with background URL
     cy.get('button').contains('⬇️ Download').should('be.visible').and('not.be.disabled')
   })
+
+  it('should handle download with CORS-restricted background URL', () => {
+    const corsRestrictedUrl = 'https://d7hftxdivxxvm.cloudfront.net/?quality=80&resize_to=width&src=https%3A%2F%2Fartsy-media-uploads.s3.amazonaws.com%2F2RNK1P0BYVrSCZEy_Sd1Ew%252F3417757448_4a6bdf36ce_o.jpg&width=1820'
+    
+    // Set up the prompt stub before changing the background
+    cy.window().then((win) => {
+      // Stub the prompt to return our CORS-restricted test URL
+      cy.stub(win, 'prompt').returns(corsRestrictedUrl)
+    })
+    
+    // Change background to web image
+    cy.get('select[name="background"]').select('web-image')
+    
+    // Verify the background selection changed to web-image
+    cy.get('select[name="background"]').should('have.value', 'web-image')
+    
+    // Wait a moment for the background to load and state to update
+    cy.wait(2000)
+    
+    // Test download with CORS-restricted background URL
+    cy.get('button').contains('⬇️ Download').click()
+    
+    // Verify that a clone element was created for capture (download process started)
+    cy.get('[id^="capture-clone-"]').should('exist')
+    
+    // Wait for the clone to be removed (download process completed)
+    cy.get('[id^="capture-clone-"]').should('not.exist')
+    
+    // Verify download works with CORS-restricted background URL
+    cy.get('button').contains('⬇️ Download').should('be.visible').and('not.be.disabled')
+    
+    // Verify the app handles CORS restrictions gracefully
+    // The app should either successfully download or fail gracefully without breaking
+    cy.get('body').should('not.contain', 'Error')
+  })
 })
 
 export {} 
