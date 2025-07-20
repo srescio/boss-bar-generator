@@ -57,6 +57,7 @@ npm run test:coverage
 ### Test Coverage
 
 The tests are designed to:
+
 - Verify default game style (Genshin Impact) is selected
 - Check that default texts appear in both form inputs and live preview
 - Validate proper form structure and accessibility
@@ -77,6 +78,7 @@ The tests are designed to:
 4. Write assertions to verify functionality and accessibility
 
 Example:
+
 ```typescript
 import React from 'react'
 import MyComponent from './MyComponent'
