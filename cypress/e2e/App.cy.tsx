@@ -107,6 +107,52 @@ describe('Boss Bar Generator App', () => {
     cy.get('.genshin-level').should('contain.text', testData.level)
   })
 
+  it('should reset all settings to default when reset button is clicked', () => {
+    // Change multiple settings to non-default values
+    const testData = {
+      bossName: 'Modified Boss Name',
+      titleLore: 'Modified Title Lore',
+      level: 'Lv. 888',
+      format: 'bar-only'
+    }
+
+    // Modify Genshin form fields (keep same game style)
+    cy.get('input[name="GenshinBar_bossname"]').clear().type(testData.bossName)
+    cy.get('input[name="GenshinBar_titlelore"]').clear().type(testData.titleLore)
+    cy.get('input[name="GenshinBar_level"]').clear().type(testData.level)
+    cy.get('select[name="format"]').select(testData.format)
+
+    // Verify changes are applied
+    cy.get('input[name="GenshinBar_bossname"]').should('have.value', testData.bossName)
+    cy.get('input[name="GenshinBar_titlelore"]').should('have.value', testData.titleLore)
+    cy.get('input[name="GenshinBar_level"]').should('have.value', testData.level)
+    cy.get('select[name="format"]').should('have.value', testData.format)
+
+    // Click reset button
+    cy.get('button').contains('🔄 Reset').click()
+
+    // Verify all settings are reset to default Genshin values
+    cy.get('input[name="GenshinBar_bossname"]').should('not.have.value', testData.bossName)
+    cy.get('input[name="GenshinBar_titlelore"]').should('not.have.value', testData.titleLore)
+    cy.get('input[name="GenshinBar_level"]').should('not.have.value', testData.level)
+    cy.get('select[name="format"]').should('have.value', 'video-call')
+
+    // Verify live preview is also reset to defaults
+    cy.get('.genshin-boss-name').should('not.contain.text', testData.bossName)
+    cy.get('.genshin-title-lore').should('not.contain.text', testData.titleLore)
+    cy.get('.genshin-level').should('not.contain.text', testData.level)
+
+    // Verify form fields have the expected default values
+    cy.get('input[name="GenshinBar_bossname"]').should('have.value', 'Boss Name')
+    cy.get('input[name="GenshinBar_titlelore"]').should('have.value', 'Title lore')
+    cy.get('input[name="GenshinBar_level"]').should('have.value', 'Lv. 100')
+
+    // Verify live preview shows default content
+    cy.get('.genshin-boss-name').should('contain.text', 'Boss Name')
+    cy.get('.genshin-title-lore').should('contain.text', 'Title lore')
+    cy.get('.genshin-level').should('contain.text', 'Lv. 100')
+  })
+
   it('should handle download functionality correctly', () => {
     // Test download button is visible and enabled
     cy.get('button').contains('⬇️ Download').should('be.visible').and('not.be.disabled')
