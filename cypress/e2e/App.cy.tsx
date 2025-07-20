@@ -228,6 +228,37 @@ describe('Boss Bar Generator App', () => {
       cy.wrap(hasValidFile).should('be.true')
     })
   })
+
+  it('should handle download with background URL', () => {
+    const backgroundUrl = 'https://cdn.mos.cms.futurecdn.net/52HVcjStCQTsaDJWzEt946-1200-80.jpg.webp'
+    
+    // Set up the prompt stub before changing the background
+    cy.window().then((win) => {
+      // Stub the prompt to return our test URL
+      cy.stub(win, 'prompt').returns(backgroundUrl)
+    })
+    
+    // Change background to web image
+    cy.get('select[name="background"]').select('web-image')
+    
+    // Verify the background selection changed to web-image
+    cy.get('select[name="background"]').should('have.value', 'web-image')
+    
+    // Wait a moment for the background to load and state to update
+    cy.wait(2000)
+    
+    // Test download with background URL
+    cy.get('button').contains('⬇️ Download').click()
+    
+    // Verify that a clone element was created for capture (download process started)
+    cy.get('[id^="capture-clone-"]').should('exist')
+    
+    // Wait for the clone to be removed (download process completed)
+    cy.get('[id^="capture-clone-"]').should('not.exist')
+    
+    // Verify download works with background URL
+    cy.get('button').contains('⬇️ Download').should('be.visible').and('not.be.disabled')
+  })
 })
 
 export {} 
