@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Sitemap location (update with your actual domain)
-Sitemap: https://bbg.simonerescio.it/sitemap.xml
+Sitemap: https://bossbargenerator.simonerescio.it/sitemap.xml
 
 # Disallow crawling of any API endpoints if you add them later
 Disallow: /api/
