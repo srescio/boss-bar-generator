@@ -1,11 +1,26 @@
 import React from 'react';
-import { bossBars } from '../bossBars';
+import { BOSS_BARS_DATA } from '../bossBarsData';
+import GenshinBar from '../bars/GenshinBar';
+import DemonsSoulsBar from '../bars/DemonsSoulsBar';
+import Tekken2Bar from '../bars/Tekken2Bar';
+import HonkaiImpactBar from '../bars/HonkaiImpactBar';
 import { BossBarState } from '../types/constants';
 import { getBarStyle, getBackgroundStyle } from '../utils/backgroundUtils';
 
 interface PreviewProps {
   state: BossBarState;
   canvasRef: React.RefObject<HTMLDivElement | null>;
+}
+
+const BAR_COMPONENTS: Record<string, React.FC<any>> = {
+  genshin: GenshinBar,
+  demonsouls: DemonsSoulsBar,
+  tekken2: Tekken2Bar,
+  honkaiimpact: HonkaiImpactBar,
+};
+
+function generateFieldKey(componentName: string, label: string) {
+  return `${componentName}_${label.replace(/\s+/g, '').toLowerCase()}`;
 }
 
 const Preview: React.FC<PreviewProps> = ({ state, canvasRef }) => {
@@ -23,17 +38,20 @@ const Preview: React.FC<PreviewProps> = ({ state, canvasRef }) => {
         aria-label={`Boss bar preview in ${state.gameStyle} style`}
       >
         {(() => {
-          const config = bossBars[state.gameStyle];
+          const config = BOSS_BARS_DATA.find(g => g.value === state.gameStyle);
           if (!config) return null;
-          const BarComponent = config.component;
+          const BarComponent = BAR_COMPONENTS[state.gameStyle];
+          if (!BarComponent) return null;
           // Pass only the fields this bar expects
           const barProps: any = { scale: state.scale };
           config.fields.forEach(f => {
-            let val = state[f.key];
+            const componentName = state.gameStyle.charAt(0).toUpperCase() + state.gameStyle.slice(1) + 'Bar';
+            const key = generateFieldKey(componentName, f.label);
+            let val = state[key];
             if (val === undefined) {
               val = f.default ?? '';
             }
-            barProps[f.key] = val;
+            barProps[key] = val;
           });
           return <BarComponent {...barProps} />;
         })()}

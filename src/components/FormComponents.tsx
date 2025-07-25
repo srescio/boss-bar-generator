@@ -1,8 +1,11 @@
 import React from 'react';
-import { bossBars, GAME_STYLES } from '../bossBars';
 import { BOSS_BARS_DATA } from '../bossBarsData';
 import { BossBarState, BACKGROUNDS, BACKGROUND_SIZE_OPTIONS, FORMAT_OPTIONS, TEKKEN_COLORS } from '../types/constants';
 import './FormComponents.css';
+
+function generateFieldKey(componentName: string, label: string) {
+  return `${componentName}_${label.replace(/\s+/g, '').toLowerCase()}`;
+}
 
 interface FormComponentsProps {
   state: BossBarState;
@@ -129,19 +132,22 @@ const FormComponents: React.FC<FormComponentsProps> = ({
     <form className="form-container" aria-label="Boss bar configuration form">
       <GameStyleSelect value={state.gameStyle} onChange={onFieldChange} />
       
-      {bossBars[state.gameStyle]?.fields.map((field, idx, arr) => {
+      {BOSS_BARS_DATA.find(g => g.value === state.gameStyle)?.fields.map((field, idx, arr) => {
+        const componentName = state.gameStyle.charAt(0).toUpperCase() + state.gameStyle.slice(1) + 'Bar';
+        const fieldKey = generateFieldKey(componentName, field.label);
         // For Tekken 2, render color select next to player input
         if (state.gameStyle === 'tekken2' && field.label.includes('Player') && !field.label.includes('Color')) {
           const colorField = arr[idx + 1];
+          const colorFieldKey = colorField ? generateFieldKey(componentName, colorField.label) : '';
           return (
-            <fieldset key={field.key} className="tekken-field-group">
+            <fieldset key={fieldKey} className="tekken-field-group">
               <legend>{field.label}</legend>
               <div className="tekken-input-group">
                 <label className="tekken-player-label">
                   Player Name:
                   <input
-                    name={field.key}
-                    value={state[field.key] !== undefined ? state[field.key] : field.default ?? ''}
+                    name={fieldKey}
+                    value={state[fieldKey] !== undefined ? state[fieldKey] : field.default ?? ''}
                     onChange={onFieldChange}
                     maxLength={100}
                     aria-label={`${field.label} player name`}
@@ -151,8 +157,8 @@ const FormComponents: React.FC<FormComponentsProps> = ({
                   <label className="tekken-color-label">
                     Color:
                     <select
-                      name={colorField.key}
-                      value={state[colorField.key] !== undefined ? state[colorField.key] : colorField.default ?? 'red'}
+                      name={colorFieldKey}
+                      value={state[colorFieldKey] !== undefined ? state[colorFieldKey] : colorField.default ?? 'red'}
                       onChange={onFieldChange}
                       aria-label={`${field.label} color selection`}
                     >
@@ -172,11 +178,11 @@ const FormComponents: React.FC<FormComponentsProps> = ({
         }
         // Default rendering for other fields
         return (
-          <fieldset key={field.key}>
+          <fieldset key={fieldKey}>
             <legend>{field.label}</legend>
             <input
-              name={field.key}
-              value={state[field.key] !== undefined ? state[field.key] : field.default ?? ''}
+              name={fieldKey}
+              value={state[fieldKey] !== undefined ? state[fieldKey] : field.default ?? ''}
               onChange={onFieldChange}
               maxLength={100}
               aria-label={field.label}

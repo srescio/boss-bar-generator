@@ -1,14 +1,10 @@
-import { bossBars } from '../bossBars';
+import { BOSS_BARS_DATA } from '../bossBarsData';
 import { BossBarState } from '../types/constants';
 
 // Simple style simulation for demo
 export const getBarStyle = (gameStyle: string): React.CSSProperties => {
-  const config = bossBars[gameStyle];
-  let style: React.CSSProperties = { fontWeight: 'bold' };
-  if (config && config.fontFamily) {
-    style.fontFamily = config.fontFamily;
-  }
-  return style;
+  // No fontFamily in BOSS_BARS_DATA, so just return default style
+  return { fontWeight: 'bold' };
 };
 
 export const getBackgroundStyle = (state: BossBarState): React.CSSProperties => {

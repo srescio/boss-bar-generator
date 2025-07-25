@@ -1,5 +1,3 @@
-import { bossBars } from '../bossBars';
-
 export const BACKGROUNDS = [
   { name: '🫥 Transparent', value: 'transparent' },
   { name: '🌐 Image from Web (URL)', value: 'web-image' },

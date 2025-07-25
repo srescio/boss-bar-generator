@@ -23,13 +23,13 @@ describe('Boss Bar Generator App', () => {
 
   it('should display default Genshin texts in form inputs', () => {
     // Check that the boss name input has a default value
-    cy.get('input[name*="bossname" i]').should('not.be.empty')
+    cy.get('input[name="GenshinBar_bossname"]').should('not.be.empty')
     
     // Check that the title lore input has a default value
-    cy.get('input[name*="titlelore" i]').should('not.be.empty')
+    cy.get('input[name="GenshinBar_titlelore"]').should('not.be.empty')
     
     // Check that the level input has a default value
-    cy.get('input[name*="level" i]').should('not.be.empty')
+    cy.get('input[name="GenshinBar_level"]').should('not.be.empty')
   })
 
   it('should display default Genshin texts in live preview', () => {

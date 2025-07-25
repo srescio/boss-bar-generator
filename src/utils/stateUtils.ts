@@ -1,10 +1,14 @@
-import { bossBars } from '../bossBars';
+import { BOSS_BARS_DATA } from '../bossBarsData';
 import { BossBarState, LOCAL_STORAGE_KEY } from '../types/constants';
+
+function generateFieldKey(componentName: string, label: string) {
+  return `${componentName}_${label.replace(/\s+/g, '').toLowerCase()}`;
+}
 
 // Dynamically generate defaultState using bossBars config
 export const generateDefaultState = (): BossBarState => {
   const style = 'genshin';
-  const config = bossBars[style];
+  const config = BOSS_BARS_DATA.find(g => g.value === style);
   const state: BossBarState = {
     gameStyle: style,
     background: 'transparent',
@@ -13,8 +17,10 @@ export const generateDefaultState = (): BossBarState => {
     scale: 5,
   };
   if (config) {
+    const componentName = style.charAt(0).toUpperCase() + style.slice(1) + 'Bar';
     config.fields.forEach(f => {
-      state[f.key] = f.default ?? '';
+      const key = generateFieldKey(componentName, f.label);
+      state[key] = f.default ?? '';
     });
   }
   return state;
@@ -29,11 +35,13 @@ export const loadStateFromStorage = (): BossBarState => {
   
   // Ensure all keys from the current config are present
   const style = loaded.gameStyle || generateDefaultState().gameStyle;
-  const config = bossBars[style];
+  const config = BOSS_BARS_DATA.find(g => g.value === style);
   if (config) {
+    const componentName = style.charAt(0).toUpperCase() + style.slice(1) + 'Bar';
     config.fields.forEach(f => {
-      if (loaded[f.key] === undefined) {
-        loaded[f.key] = f.default ?? '';
+      const key = generateFieldKey(componentName, f.label);
+      if (loaded[key] === undefined) {
+        loaded[key] = f.default ?? '';
       }
     });
   }
