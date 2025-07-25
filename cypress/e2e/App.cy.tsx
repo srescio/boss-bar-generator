@@ -326,6 +326,132 @@ describe('Boss Bar Generator App', () => {
       cy.screenshot(`download-default-${value}`);
     });
   });
+
+  it('should generate predictable screenshots for visual comparison', () => {
+    // Clean up downloads before starting
+    cy.task('deleteDownloads');
+    
+    // Test data for different formats
+    const testConfigs = [
+      { format: 'bar-only', text: 'default', description: 'bar-only-default' },
+      { format: 'video-call', text: 'lorem ipsum dolor sit amet', description: 'video-call-lorem' }
+    ];
+
+    BOSS_BARS_DATA.forEach(({ value, label }) => {
+      testConfigs.forEach(({ format, text, description }) => {
+        // Reset to default
+        cy.get('button').contains('🔄 Reset').click();
+        cy.wait(300);
+
+        // Change game style if not the first
+        if (value !== 'genshin') {
+          cy.get('select[name="gameStyle"]').select(value);
+          cy.wait(300);
+        }
+
+        // Set scale to 3
+        cy.get('input[name="scale"]').invoke('val', 3).trigger('input').trigger('change');
+        cy.get('input[name="scale"]').should('have.value', '3');
+
+        // Set format
+        cy.get('select[name="format"]').select(format);
+        cy.get('select[name="format"]').should('have.value', format);
+
+        // Update text for video-call format
+        if (text !== 'default') {
+          // Update boss name field for all styles
+          if (value === 'tekken2') {
+            // Tekken 2 has Player 1 and Player 2, not Boss Name
+            cy.get('input[name="Tekken2Bar_player1"]').clear().type(text);
+            cy.get('input[name="Tekken2Bar_player2"]').clear().type('Opponent');
+          } else {
+            // Other styles have Boss Name field
+            const bossNameKey = `${value.charAt(0).toUpperCase() + value.slice(1)}Bar_bossname`;
+            cy.get(`input[name="${bossNameKey}"]`).clear().type(text);
+          }
+          
+          // Skip additional fields for now to avoid field name issues
+          // TODO: Add back additional field updates once field names are confirmed
+        }
+
+        // Download
+        cy.get('button').contains('⬇️ Download').click();
+        cy.get('[id^="capture-clone-"]').should('exist');
+        cy.get('[id^="capture-clone-"]').should('not.exist');
+
+        // Wait for download to complete
+        cy.wait(1000);
+      });
+    });
+
+    // Verify all expected files were downloaded and perform visual comparison
+    cy.task('checkDownloads').then((files) => {
+      const fileNames = files as string[];
+      const expectedCount = BOSS_BARS_DATA.length * testConfigs.length;
+      cy.wrap(fileNames).should('have.length', expectedCount);
+      
+      // Log file names for reference
+      cy.log(`Downloaded files: ${fileNames.join(', ')}`);
+
+      // Visual comparison logic
+      // This compares current screenshots against baseline images
+      cy.task('compareScreenshots', {
+        currentFiles: fileNames,
+        baselineDir: 'cypress/baseline/downloads',
+        tolerance: 0.1 // 10% tolerance for visual differences
+      });
+    });
+  });
+
+  it('should maintain consistent app UI appearance', () => {
+    // Visit the app
+    cy.visit('/');
+    
+    // Wait for app to load
+    cy.get('h1').should('contain', 'Boss Bar Generator');
+    
+    // Take screenshot of the main app interface
+    cy.screenshot('app-main-interface');
+    
+    // Test different game styles and take screenshots
+    BOSS_BARS_DATA.forEach(({ value, label }) => {
+      if (value !== 'genshin') {
+        cy.get('select[name="gameStyle"]').select(value);
+        cy.wait(300); // Wait for UI to update
+      }
+      
+      // Take screenshot for each game style
+      cy.screenshot(`app-${value}-style`);
+    });
+    
+    // Reset to Genshin for form interaction test
+    cy.get('button').contains('🔄 Reset').click();
+    cy.wait(300);
+    
+    // Test form interactions and take screenshots
+    cy.get('input[name="GenshinBar_bossname"]').clear().type('Test Boss');
+    cy.screenshot('app-form-filled');
+    
+    // Reset and take screenshot
+    cy.get('button').contains('🔄 Reset').click();
+    cy.wait(300);
+    cy.screenshot('app-after-reset');
+    
+    // Compare screenshots against baseline
+    cy.task('compareScreenshots', {
+      currentFiles: [
+        'app-main-interface.png',
+        'app-genshin-style.png',
+        'app-demonsouls-style.png',
+        'app-tekken2-style.png',
+        'app-honkaiimpact-style.png',
+        'app-form-filled.png',
+        'app-after-reset.png'
+      ],
+      baselineDir: 'cypress/baseline/App.cy.tsx',
+      tolerance: 0.1
+    });
+  });
 })
 
 export {} 
