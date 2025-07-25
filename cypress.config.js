@@ -40,7 +40,7 @@ module.exports = defineConfig({
             try {
               // Escape the JSON string properly for command line
               const escapedFiles = JSON.stringify(currentFiles).replace(/"/g, '\\"');
-              const command = `node scripts/pixel-compare.mjs "${escapedFiles}" "${baselineDir}" ${tolerance}`;
+              const command = `node cypress/pixel-compare.mjs "${escapedFiles}" "${baselineDir}" ${tolerance}`;
               
               const { stdout, stderr } = await exec(command);
               
