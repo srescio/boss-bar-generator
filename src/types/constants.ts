@@ -1,7 +1,5 @@
 import { bossBars } from '../bossBars';
 
-export const GAME_STYLES = Object.entries(bossBars).map(([value, config]) => ({ name: config.label, value }));
-
 export const BACKGROUNDS = [
   { name: '🫥 Transparent', value: 'transparent' },
   { name: '🌐 Image from Web (URL)', value: 'web-image' },

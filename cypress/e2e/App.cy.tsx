@@ -1,5 +1,7 @@
 /// <reference types="cypress" />
 
+import { BOSS_BARS_DATA } from '../../src/bossBarsData';
+
 describe('Boss Bar Generator App', () => {
   beforeEach(() => {
     // Visit the app using baseUrl
@@ -294,6 +296,36 @@ describe('Boss Bar Generator App', () => {
     // The app should either successfully download or fail gracefully without breaking
     cy.get('body').should('not.contain', 'Error')
   })
+
+  it('should download for all game styles with default data, scale 3, and bar-only format', () => {
+    BOSS_BARS_DATA.forEach(({ value, label }) => {
+      // Reset to default
+      cy.get('button').contains('🔄 Reset').click();
+      cy.wait(300); // Wait for reset
+
+      // Change game style if not the first
+      if (value !== 'genshin') {
+        cy.get('select[name="gameStyle"]').select(value);
+        cy.wait(300); // Wait for form to update
+      }
+
+      // Set scale to 3
+      cy.get('input[name="scale"]').invoke('val', 3).trigger('input').trigger('change');
+      cy.get('input[name="scale"]').should('have.value', '3');
+
+      // Set format to bar-only
+      cy.get('select[name="format"]').select('bar-only');
+      cy.get('select[name="format"]').should('have.value', 'bar-only');
+
+      // Download
+      cy.get('button').contains('⬇️ Download').click();
+      cy.get('[id^="capture-clone-"]').should('exist');
+      cy.get('[id^="capture-clone-"]').should('not.exist');
+
+      // Screenshot for visual confirmation
+      cy.screenshot(`download-default-${value}`);
+    });
+  });
 })
 
 export {} 

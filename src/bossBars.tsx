@@ -79,4 +79,6 @@ export const bossBars: Record<string, BossBarConfig> = Object.fromEntries(
     }));
     return [key, { ...config, fields }];
   })
-); 
+);
+
+export const GAME_STYLES = Object.entries(bossBars).map(([value, config]) => ({ value, name: config.label })); 

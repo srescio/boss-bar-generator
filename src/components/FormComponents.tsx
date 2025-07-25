@@ -1,6 +1,7 @@
 import React from 'react';
-import { bossBars } from '../bossBars';
-import { BossBarState, GAME_STYLES, BACKGROUNDS, BACKGROUND_SIZE_OPTIONS, FORMAT_OPTIONS, TEKKEN_COLORS } from '../types/constants';
+import { bossBars, GAME_STYLES } from '../bossBars';
+import { BOSS_BARS_DATA } from '../bossBarsData';
+import { BossBarState, BACKGROUNDS, BACKGROUND_SIZE_OPTIONS, FORMAT_OPTIONS, TEKKEN_COLORS } from '../types/constants';
 import './FormComponents.css';
 
 interface FormComponentsProps {
@@ -20,8 +21,8 @@ const GameStyleSelect: React.FC<{ value: string; onChange: (e: React.ChangeEvent
       onChange={onChange}
       aria-label="Select game style for boss bar"
     >
-      {GAME_STYLES.map((g) => (
-        <option key={g.value} value={g.value}>{g.name}</option>
+      {BOSS_BARS_DATA.map((g) => (
+        <option key={g.value} value={g.value}>{g.label}</option>
       ))}
     </select>
   </fieldset>
