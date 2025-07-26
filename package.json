@@ -1,7 +1,11 @@
 {
   "name": "boss-bar-generator",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "description": "A web-based boss bar generator for creating custom health bars in various game styles",
+  "keywords": ["boss-bar", "health-bar", "generator", "gaming", "ui", "react", "typescript"],
+  "author": "Simone Rescio",
+  "license": "MIT",
   "dependencies": {
     "@types/node": "^16.18.126",
     "@types/react": "^19.1.8",
