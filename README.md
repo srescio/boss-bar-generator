@@ -39,19 +39,16 @@ npm run build
 
 ## Testing
 
-This project uses Cypress Component Testing for comprehensive functional testing with code coverage.
+This project uses Cypress E2E Testing for comprehensive functional testing with visual regression testing.
 
 ### Running Tests
 
 ```bash
-# Open Cypress Component Test Runner (interactive)
-npm run cypress:component:open
+# Open Cypress E2E Test Runner (interactive)
+npm run cypress:open
 
-# Run Cypress Component Tests (headless)
-npm run cypress:component
-
-# Run tests with code coverage
-npm run test:coverage
+# Run Cypress E2E Tests (headless)
+npm run cypress:run
 ```
 
 ### Test Coverage
@@ -62,31 +59,33 @@ The tests are designed to:
 - Check that default texts appear in both form inputs and live preview
 - Validate proper form structure and accessibility
 - Ensure action buttons have proper ARIA labels
-- Test component interactions and state changes
+- Test form interactions and state changes
+- Test download functionality with file verification
+- Perform visual regression testing with pixel-level comparison
+- Test all game styles and formats
 
 ### Test Structure
 
-- **Component Tests**: Located in `src/**/*.cy.tsx` files
-- **Coverage Reports**: Generated in `coverage/` directory
-- **Configuration**: See `cypress.config.ts` and `.nycrc`
+- **E2E Tests**: Located in `cypress/e2e/` directory
+- **Visual Regression**: Baseline images in `cypress/baseline/` directory
+- **Configuration**: See `cypress.config.js`
 
 ### Adding New Tests
 
-1. Create a new `.cy.tsx` file in the same directory as your component
-2. Import the component and write tests using Cypress commands
-3. Use `cy.mount()` to render the component
+1. Create a new `.cy.tsx` file in `cypress/e2e/` directory
+2. Write tests using Cypress E2E commands
+3. Use `cy.visit('/')` to load the application
 4. Write assertions to verify functionality and accessibility
 
 Example:
 
 ```typescript
-import React from 'react'
-import MyComponent from './MyComponent'
-
-describe('MyComponent', () => {
-  it('should render correctly', () => {
-    cy.mount(<MyComponent />)
+describe('New Feature', () => {
+  it('should work correctly', () => {
+    cy.visit('/')
     cy.get('[data-testid="my-element"]').should('be.visible')
+    cy.get('button').contains('Click me').click()
+    cy.get('.result').should('contain', 'Success')
   })
 })
 ```
