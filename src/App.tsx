@@ -180,6 +180,17 @@ function App() {
       <footer role="contentinfo">
         <p className="footer-text">
           Made by <a href="https://simonerescio.it" className="footer-link" rel="author">Simone Rescio</a>
+          &nbsp;|&nbsp;
+          <a 
+            href="https://github.com/srescio/boss-bar-generator" 
+            className="footer-link"
+            rel="noopener noreferrer external"
+            target="_blank"
+            aria-label="Boss Bar Generator GitHub repository"
+            title="View source code on GitHub"
+          >
+            GitHub Repo
+          </a>
         </p>
       </footer>
     </div>

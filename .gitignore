@@ -23,3 +23,6 @@ yarn-error.log*
 
 cypress/downloads
 cypress/screenshots
+
+# SFTP Configuration (contains sensitive credentials)
+.vscode/sftp.json
