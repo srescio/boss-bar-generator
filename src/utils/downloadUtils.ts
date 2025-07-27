@@ -1,8 +1,6 @@
-import html2canvas from 'html2canvas';
-import { BossBarState } from '../types/constants';
+
 
 export const convertWebImage = async (imageUrl: string): Promise<string> => {
-  console.log('Attempting to convert web image:', imageUrl);
   
   // Try multiple approaches in sequence
   const approaches = [
@@ -76,9 +74,7 @@ export const convertWebImage = async (imageUrl: string): Promise<string> => {
   // Try each approach until one works
   for (let i = 0; i < approaches.length; i++) {
     try {
-      console.log(`Trying approach ${i + 1}...`);
       const result = await approaches[i]();
-      console.log(`Approach ${i + 1} succeeded!`);
       return result;
     } catch (error) {
       console.warn(`Approach ${i + 1} failed:`, error);

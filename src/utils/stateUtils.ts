@@ -30,9 +30,6 @@ export const loadStateFromStorage = (): BossBarState => {
   const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
   let loaded = saved ? JSON.parse(saved) : { ...generateDefaultState() };
   
-  console.log('Loading state from localStorage:', saved);
-  console.log('Parsed state:', loaded);
-  
   // Ensure all keys from the current config are present
   const style = loaded.gameStyle || generateDefaultState().gameStyle;
   const config = BOSS_BARS_DATA.find(g => g.value === style);
@@ -50,7 +47,6 @@ export const loadStateFromStorage = (): BossBarState => {
     loaded.backgroundSize = 'cover';
   }
   
-  console.log('Final loaded state:', loaded);
   return loaded;
 };
 
